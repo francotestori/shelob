@@ -7,9 +7,10 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.11.1"
 
 libraryDependencies ++= Seq(
-
   jdbc,
   anorm,
   cache,
+  "com.typesafe.slick" %% "slick" % "3.0.0",
+  "org.slf4j" % "slf4j-nop" % "1.6.4",
   ws
 )
