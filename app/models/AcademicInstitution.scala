@@ -8,8 +8,16 @@ import slick.lifted.ProvenShape
  */
 case class AcademicInstitution(id:Long, name:String, description:String, webSite:String)
 
-class AcademicInstitutions(tag:Tag) extends Table[AcademicInstitution]("ACADEMIC_INSTITUTION"){
-  override def * : ProvenShape[AcademicInstitution] = ???
+class AcademicInstitutions(tag:Tag) extends Table[AcademicInstitution](tag,"ACADEMIC_INSTITUTION"){
+  def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
+
+  def name = column[String]("NAME")
+
+  def description = column[String]("DESCRIPTION")
+
+  def website = column[String]("WEBSITE")
+
+  override def * : ProvenShape[AcademicInstitution] = (id, name, description, website) <> (AcademicInstitution.tupled, AcademicInstitution.unapply _)
 }
 
 
