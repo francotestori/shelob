@@ -18,8 +18,8 @@ import slick.driver.H2Driver.api._
 import slick.driver.H2Driver.api._
 
 
-  case class TangelaOwner(id: Long,tangela_id:Long, name: String, bio: String, role: String, followerCount:Long, angelList_url: String,
-                   image: String, blog_url: String, bio_url: String,twitter_url: String, facebook_url: String, linkedin_url: String,investor: Boolean)
+  case class TangelaOwner(id: Long,tangela_id:Long, name: String, bio: String, role: String, follower_count:Long, angelList_url: String,
+                   image: String, blog_url: String, bio_url: String,twitter_url: String, facebook_url: String, linkedin_url: String,what_ive_built : String,what_i_do : String,investor: Boolean)
 
 
   class TangelaOwners(tag:Tag) extends Table[TangelaOwner](tag,"TANGELA_OWNER"){
@@ -27,21 +27,23 @@ import slick.driver.H2Driver.api._
     def id = column[Long]("ID", O.PrimaryKey,O.AutoInc)
     def tangela_id = column[Long]("TANGELA_ID")
     def name = column[String]("NAME")
-    def bio = column[String]("LOCATION")
-    def role = column[String]("INDUSTRY")
-    def followerCount = column[Long]("SUMMARY_EDUCATION")
-    def angelList_url = column[String]("WEBSITE")
-    def image = column[String]("EXPERIENCE")
-    def blog_url = column[String]("EDUCATION")
-    def bio_url = column[String]("ACTUAL_INTITUTION")
+    def bio = column[String]("BIO")
+    def role = column[String]("ROLE")
+    def follower_count = column[Long]("FOLLOWER_COUNT")
+    def angelList_url = column[String]("ANGELLIST_URL")
+    def image = column[String]("IMAGE")
+    def blog_url = column[String]("BLOG_URL")
+    def bio_url = column[String]("BIO_URL")
     def twitter_url = column[String]("TWITTER_URL")
     def facebook_url = column[String]("FACEBOOK_URL")
     def linkedin_url = column[String]("LINKEDIN_URL")
+    def what_ive_built = column[String]("WHAT_IVE_BUILT")
+    def what_i_do = column[String]("WHAT_I_DO")
     def investor = column[Boolean]("INVESTOR")
 
-    override def * : ProvenShape[TangelaOwner] = (id, tangela_id, name, bio, role, followerCount, angelList_url, image, blog_url, bio_url, twitter_url, facebook_url, linkedin_url, investor) <> (TangelaOwner.tupled, TangelaOwner.unapply)
-
-
+    override def * : ProvenShape[TangelaOwner] = (id, tangela_id, name, bio, role, follower_count, angelList_url,
+      image, blog_url, bio_url, twitter_url, facebook_url, linkedin_url, what_ive_built,
+      what_i_do, investor) <> (TangelaOwner.tupled, TangelaOwner.unapply)
 }
 
 
