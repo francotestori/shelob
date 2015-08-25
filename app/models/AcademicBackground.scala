@@ -14,11 +14,11 @@ case class AcademicBackground (id:Long,title:String,academicInstitutionId:Long ,
 class AcademicBackgrounds(tag:Tag) extends Table[AcademicBackground](tag,"ACADEMIC_BACKGROUND"){
 
   def id = column[Long]("ID",O.PrimaryKey,O.AutoInc)
-  def title = column[String]("ROLE")
+  def title = column[String]("TITLE")
   def academicInstitutionId = column[Long]("ACADEMIC_INSTITUTION_ID")
   def linkedinOwnerId = column[Long]("LINKEDIN_OWNER_ID")
   def startDate = column[String]("START_DATE")
-  def finishDate = column[String]("FINISH_DATE")
+  def finishDate = column[String]("END_DATE")
   def description = column[String]("DESCRIPTION")
 
   override def * : ProvenShape[AcademicBackground] = (id, title, academicInstitutionId, linkedinOwnerId, startDate, finishDate, description) <> (AcademicBackground.tupled, AcademicBackground.unapply)
