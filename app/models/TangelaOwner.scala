@@ -18,12 +18,12 @@ import slick.driver.H2Driver.api._
 import slick.driver.H2Driver.api._
 
 
-  case class TangelaOwner(id: Long, name: String, bio: String, role: String,linkedin_url: String)
+  case class TangelaOwner(id: Option[Long], name: String, bio: String, role: String,linkedin_url: String)
 
 
   class TangelaOwners(tag:Tag) extends Table[TangelaOwner](tag,"TANGELA_OWNER"){
 
-    def id = column[Long]("ID", O.PrimaryKey,O.AutoInc)
+    def id = column[Option[Long]]("ID", O.PrimaryKey,O.AutoInc)
 //    def tangela_id = column[Long]("TANGELA_ID")
     def name = column[String]("NAME")
     def bio = column[String]("BIO")

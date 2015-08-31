@@ -6,11 +6,11 @@ import slick.lifted.ProvenShape
 /**
  * Created by franco on 22/05/2015.
  */
-case class LinkedInOwner(id:Long,name:String,location:String,industry:String,website:String)
+case class LinkedInOwner(id:Option[Long],name:String,location:String,industry:String,website:String)
 
 class LinkedInOwners(tag:Tag) extends Table[LinkedInOwner](tag,"LINKEDIN_OWNER"){
 
-  def id = column[Long]("ID",O.PrimaryKey,O.AutoInc)
+  def id = column[Option[Long]]("ID",O.PrimaryKey,O.AutoInc)
 //  def tangela_owner_id = column[Long]("TANGELA_OWNER_ID")
   def name = column[String]("NAME")
   def location = column[String]("LOCATION")

@@ -18,33 +18,33 @@
 -- constraint pk_tangela_owner primary key (id)
 -- );
 
-create table TANGELA_OWNER(
-tangela_id                  varchar(255) UNIQUE ,
-name                        varchar(255),
-bio                         varchar(400),
-role                        varchar(255),
-linkedIn_url                varchar(255)
-)
-AS SELECT * FROM CSVREAD('C:\\users-argentina.csv');
-
--- create table TEST(
--- id                          bigint not null,
+-- create table TANGELA_OWNER(
+-- tangela_id                  varchar(255) UNIQUE ,
 -- name                        varchar(255),
 -- bio                         varchar(400),
 -- role                        varchar(255),
--- follower_count              bigint,
--- angelList_url               varchar(255),
--- image                       varchar(255),
--- blog_url                    varchar(255),
--- bio_url                     varchar(255),
--- twitter_url                 varchar(255),
--- facebook_url                varchar(255),
--- linkedIn_url                varchar(255),
--- what_ive_built              varchar(1000),
--- what_i_do                   varchar(1000),
--- investor                    boolean,
+-- linkedIn_url                varchar(255)
 -- )
 -- AS SELECT * FROM CSVREAD('C:\\users-argentina.csv');
+
+create table TEST(
+id                          bigint not null,
+name                        varchar(255),
+bio                         varchar(400),
+role                        varchar(255),
+follower_count              bigint,
+angelList_url               varchar(255),
+image                       varchar(255),
+blog_url                    varchar(255),
+bio_url                     varchar(255),
+twitter_url                 varchar(255),
+facebook_url                varchar(255),
+linkedIn_url                varchar(255),
+what_ive_built              varchar(1000),
+what_i_do                   varchar(1000),
+investor                    boolean,
+)
+AS SELECT * FROM CSVREAD('C:\\users-argentina.csv');
 
 create table LINKEDIN_OWNER(
 id                          bigint auto_increment not null,
@@ -60,10 +60,8 @@ create table BUSINESS_INSTITUTION(
 id                          bigint auto_increment not null,
 name                        varchar(255),
 description                 varchar(255),
-website                     varchar(255),
 sector                      varchar(255),
 location                    varchar(255),
-size                        varchar(255),
 constraint pk_business_institution primary key (id)
 );
 
@@ -71,7 +69,6 @@ create table ACADEMIC_INSTITUTION(
 id                          bigint auto_increment not null,
 name                        varchar(255),
 description                 varchar(255),
-website                     varchar(255),
 constraint pk_academic_institution primary key (id)
 );
 
@@ -80,9 +77,8 @@ id                          bigint auto_increment not null,
 business_institution_id     bigint not null,
 linkedin_owner_id           bigint not null,
 role                        varchar(255),
-start_date                  varchar(255),
-end_date                    varchar(255),
-description                 varchar(600),
+interval                    varchar(255),
+description                 varchar(1600),
 constraint pk_business_background primary key (id)
 );
 
@@ -91,8 +87,7 @@ id                          bigint auto_increment not null,
 academic_institution_id     bigint not null,
 linkedin_owner_id           bigint not null,
 title                       varchar(255),
-start_date                  varchar(255),
-end_date                    varchar(255),
+interval                    varchar(255),
 description                 varchar(600),
 constraint pk_academic_background primary key (id)
 );
