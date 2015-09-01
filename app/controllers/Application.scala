@@ -38,16 +38,15 @@ object Application extends Controller {
     val a_backgrounds = TableQuery[AcademicBackgrounds]
 
     //url & url_document
-//    val url = "http://ar.linkedin.com/in/ricardoanibalpasquini"
+    val url = "http://ar.linkedin.com/in/ricardoanibalpasquini"
 //    val url = "https://ar.linkedin.com/in/arielDarioPerez/es"
 //    val url = "https://ar.linkedin.com/in/luisrgarcia"
-    val url = "https://ar.linkedin.com/pub/franco-testori/38/814/197"
+//    val url = "https://ar.linkedin.com/pub/franco-testori/38/814/197"
 //    val url = "https://ar.linkedin.com/in/horaciorodriguezlarreta"
     val doc : Document = Jsoup.connect(url).get()
 
     //Basic Items
     val names : Elements = doc.select(".full-name")
-    val actual_title : Elements = doc.select(".title")
     val locations : Elements = doc.select(".locality")
     val industries : Elements = doc.select(".industry")
 
@@ -63,7 +62,8 @@ object Application extends Controller {
     val industry = industries.get(0).text()
 
     //Add LinkedIn Owner
-    val insertOwner = (l_owners returning l_owners.map(_.id) into ((owner,id) => owner.copy(id=Some(id).get))) += LinkedInOwner(None,name,location,industry,url)
+    val insertOwner =  (l_owners returning l_owners.map(_.id) into ((owner,id) => owner.copy(id=Some(id).get))) += LinkedInOwner(None,name,location,industry,url)
+
     val ownerValue = db.run(insertOwner)
     Await.result(ownerValue,Duration.Inf)
 
@@ -72,7 +72,7 @@ object Application extends Controller {
     //Add both Business Institution & Business Background
     for(i <- 0 to experiences.size() -1){
       val role = getRole(experiences.get(i))
-      val institute = getInstitute(experiences.get(i))
+      val institute = getInstitute(experiences.get(i)).toUpperCase
       val when = getWhen(experiences.get(i))
       val desc = getDesc(experiences.get(i))
       if(validateBusiness(role,institute,when,desc)){
@@ -92,7 +92,7 @@ object Application extends Controller {
           b_backgrounds += BusinessBackground(None,
             role,
             businessID,
-            ownerID,
+            1,
             when,
             desc)
         )
@@ -103,7 +103,7 @@ object Application extends Controller {
 
     //Add both Academic Institution & Academic Background
     for(i <- 0 to academics.size() -1){
-      val academy = getAcademy(academics.get(i))
+      val academy = getAcademy(academics.get(i)).toUpperCase
       val title = getTitle(academics.get(i))
       val interval = getInterval(academics.get(i))
       if(validateAcademic(academy,title,interval)){
@@ -122,7 +122,7 @@ object Application extends Controller {
           a_backgrounds += AcademicBackground(None,
             title,
             academyID,
-            ownerID,
+            1,
             interval,
             "")
         )

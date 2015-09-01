@@ -18,6 +18,6 @@ class BusinessBackgrounds(tag:Tag) extends Table[BusinessBackground](tag,"BUSINE
   def interval = column[String]("INTERVAL")
   def description = column[String]("DESCRIPTION")
 
-  override def * : ProvenShape[BusinessBackground] = (id, role, businessInstitution_id,linkedinOwnerId,startdate,finishdate,description) <> (BusinessBackground.tupled,BusinessBackground.unapply)
+  override def * : ProvenShape[BusinessBackground] = (id, role, businessInstitution_id,linkedinOwnerId,interval,description) <> (BusinessBackground.tupled,BusinessBackground.unapply)
 
 }

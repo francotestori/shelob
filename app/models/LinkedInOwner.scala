@@ -22,4 +22,3 @@ class LinkedInOwners(tag:Tag) extends Table[LinkedInOwner](tag,"LINKEDIN_OWNER")
 
 
 
-

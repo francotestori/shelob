@@ -52,13 +52,13 @@ id                          bigint auto_increment not null,
 name                        varchar(255),
 location                    varchar(255),
 industry                    varchar(255),
-website                     varchar(255),
+website                     varchar(255) not null unique,
 constraint pk_linkedin_owner primary key (id)
 );
 
 create table BUSINESS_INSTITUTION(
 id                          bigint auto_increment not null,
-name                        varchar(255),
+name                        varchar(255)not null unique,
 description                 varchar(255),
 sector                      varchar(255),
 location                    varchar(255),
@@ -67,7 +67,7 @@ constraint pk_business_institution primary key (id)
 
 create table ACADEMIC_INSTITUTION(
 id                          bigint auto_increment not null,
-name                        varchar(255),
+name                        varchar(255)not null unique,
 description                 varchar(255),
 constraint pk_academic_institution primary key (id)
 );
