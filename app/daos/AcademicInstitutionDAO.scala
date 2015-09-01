@@ -23,7 +23,7 @@ class AcademicInstitutionDAO (implicit ec: ExecutionContext){
       ) += (name,description)
   }
 
-  def selectByUrl(name : String) : Future[Option[AcademicInstitution]] = db.run(
+  def selectByName(name : String) : Future[Option[AcademicInstitution]] = db.run(
     academicInstitutions.filter(_.name === name).result.map(_.headOption)
   )
 
