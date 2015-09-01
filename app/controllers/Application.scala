@@ -3,6 +3,7 @@ package controllers
 import java.io.{FileWriter, BufferedWriter, File}
 import java.util.regex.Pattern
 
+import daos._
 import models._
 import org.h2.jdbc.JdbcSQLException
 import org.jsoup.Jsoup
@@ -56,18 +57,13 @@ object Application extends Controller {
     //Academic Items
     val academics : Elements = doc.getElementsByAttributeValueMatching("id",Pattern.compile("education-[0-9]+[0-9]*"))
 
-//    val title = actual_title.get(0).text()
     val location = locations.get(0).text()
     val name = names.get(0).text()
     val industry = industries.get(0).text()
 
     //Add LinkedIn Owner
-    val insertOwner =  (l_owners returning l_owners.map(_.id) into ((owner,id) => owner.copy(id=Some(id).get))) += LinkedInOwner(None,name,location,industry,url)
-
-    val ownerValue = db.run(insertOwner)
-    Await.result(ownerValue,Duration.Inf)
-
-    val ownerID = ownerValue.value.head.get.id.get
+    val linkedInOwner = new LinkedInOwnerDAO()
+    val ownerInserted= Await.result(linkedInOwner.insertIfNotExists(name, location, industry, url), Duration.Inf)
 
     //Add both Business Institution & Business Background
     for(i <- 0 to experiences.size() -1){
@@ -78,26 +74,13 @@ object Application extends Controller {
       if(validateBusiness(role,institute,when,desc)){
 
         //Add Business Institution
-        val insertBusiness = (b_institutions returning b_institutions.map(_.id) into ((institution,id) => institution.copy(id=Some(id).get))) += BusinessInstitution(None,institute,"","","")
-        val institutionValue = db.run(insertBusiness)
-        Await.result(institutionValue,Duration.Inf)
-
-        val businessID = institutionValue.value.head.get.id.get
+        val businessInst = new BusinessInstitutionDAO()
+        val businessInstInserted = Await.result(businessInst.insertIfNotExists(institute, desc, "", ""), Duration.Inf)
 
         //Add Background
-//        val index = when.indexOf('-')
-//        val from = when.substring(0,index - 1).trim
-//        val to = when.substring(index + 1, when.length).trim
-        val setupBackground: DBIO[Unit] = DBIO.seq(
-          b_backgrounds += BusinessBackground(None,
-            role,
-            businessID,
-            1,
-            when,
-            desc)
-        )
-        val setupFutureBackground: Future[Unit] = db.run(setupBackground)
-        Await.result(setupFutureBackground, Duration.Inf)
+        val businessBack = new BusinessBackgroundDAO()
+        val businessBackInserted =
+          businessBack.insertIfNotExists(role, businessInstInserted.id.get, ownerInserted.id.get, when, desc)
       }
     }
 
@@ -107,27 +90,15 @@ object Application extends Controller {
       val title = getTitle(academics.get(i))
       val interval = getInterval(academics.get(i))
       if(validateAcademic(academy,title,interval)){
-        //Add Academy
-        val insertAcademy = (a_institutions returning a_institutions.map(_.id) into ((academicInstitute,id) => academicInstitute.copy(id=Some(id.get)))) += AcademicInstitution(None,academy,"")
-        val academyValue = db.run(insertAcademy)
-        Await.result(academyValue,Duration.Inf)
 
-        val academyID = academyValue.value.head.get.id.get
+        //Add Academy
+        val academicInstitution = new AcademicInstitutionDAO()
+        val academicInstInserted = Await.result(academicInstitution.insertIfNotExists(academy, ""),Duration.Inf)
 
         //Add Background
-//        val index = interval.indexOf('-')
-//        val from = interval.substring(0,index - 1).trim
-//        val to = interval.substring(index + 1, interval.length).trim
-        val setupBackground: DBIO[Unit] = DBIO.seq(
-          a_backgrounds += AcademicBackground(None,
-            title,
-            academyID,
-            1,
-            interval,
-            "")
-        )
-        val setupFutureBackground: Future[Unit] = db.run(setupBackground)
-        Await.result(setupFutureBackground, Duration.Inf)
+        val academicBack = new AcademicBackgroundDAO()
+        val academicBackInserted =
+          academicBack.insertIfNotExists(title, academicInstInserted.id.get, ownerInserted.id.get, interval, "")
       }
     }
 
