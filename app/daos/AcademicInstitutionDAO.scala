@@ -28,7 +28,7 @@ class AcademicInstitutionDAO (implicit ec: ExecutionContext){
   )
 
   def insertIfNotExists(name:String, description:String) : Future[AcademicInstitution] ={
-    val exists = Await.result(selectByUrl(name),Duration.Inf)
+    val exists = Await.result(selectByName(name),Duration.Inf)
     if(exists == None) insert(name,description)
     else Future(exists.get)
   }

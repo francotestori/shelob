@@ -10,6 +10,7 @@ import org.jsoup.nodes.{Element, Document}
 import org.jsoup.select.Elements
 import play.api.mvc.{Action, Controller}
 import play.api.{Application, GlobalSettings}
+import scrapper.strategies._
 
 import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,10 +39,10 @@ object Application extends Controller {
     val a_backgrounds = TableQuery[AcademicBackgrounds]
 
     //url & url_document
-    val url = "http://ar.linkedin.com/in/ricardoanibalpasquini"
+//    val url = "http://ar.linkedin.com/in/ricardoanibalpasquini"
 //    val url = "https://ar.linkedin.com/in/arielDarioPerez/es"
 //    val url = "https://ar.linkedin.com/in/luisrgarcia"
-//    val url = "https://ar.linkedin.com/pub/franco-testori/38/814/197"
+    val url = "https://ar.linkedin.com/pub/franco-testori/38/814/197"
 //    val url = "https://ar.linkedin.com/in/horaciorodriguezlarreta"
     val doc : Document = Jsoup.connect(url).get()
 
@@ -64,6 +65,8 @@ object Application extends Controller {
     //Add LinkedIn Owner
     val insertOwner =  (l_owners returning l_owners.map(_.id) into ((owner,id) => owner.copy(id=Some(id).get))) += LinkedInOwner(None,name,location,industry,url)
 
+//    val insertOwner = LinkedInOwnerDAO().insertIfNotExists(name,location,industry,url)
+
     val ownerValue = db.run(insertOwner)
     Await.result(ownerValue,Duration.Inf)
 
@@ -71,10 +74,10 @@ object Application extends Controller {
 
     //Add both Business Institution & Business Background
     for(i <- 0 to experiences.size() -1){
-      val role = getRole(experiences.get(i))
-      val institute = getInstitute(experiences.get(i)).toUpperCase
-      val when = getWhen(experiences.get(i))
-      val desc = getDesc(experiences.get(i))
+      val role = RoleStrategy.RoleStrategies(experiences.get(i)).first()
+      val institute = InstituteStrategy.InstituteStrategies(experiences.get(i)).first().toUpperCase
+      val when = IntervalStrategy.IntervalStrategies(experiences.get(i)).businessFirst()
+      val desc = DescriptionStrategy.DescriptionStrategies(experiences.get(i)).first()
       if(validateBusiness(role,institute,when,desc)){
 
         //Add Business Institution
@@ -103,9 +106,9 @@ object Application extends Controller {
 
     //Add both Academic Institution & Academic Background
     for(i <- 0 to academics.size() -1){
-      val academy = getAcademy(academics.get(i)).toUpperCase
-      val title = getTitle(academics.get(i))
-      val interval = getInterval(academics.get(i))
+      val academy = AcademyStrategy.AcademyStrategies(academics.get(i)).first().toUpperCase
+      val title = TitleStrategy.TitleStrategies(academics.get(i)).first()
+      val interval = IntervalStrategy.IntervalStrategies(academics.get(i)).academyFirst()
       if(validateAcademic(academy,title,interval)){
         //Add Academy
         val insertAcademy = (a_institutions returning a_institutions.map(_.id) into ((academicInstitute,id) => academicInstitute.copy(id=Some(id.get)))) += AcademicInstitution(None,academy,"")
@@ -115,9 +118,6 @@ object Application extends Controller {
         val academyID = academyValue.value.head.get.id.get
 
         //Add Background
-//        val index = interval.indexOf('-')
-//        val from = interval.substring(0,index - 1).trim
-//        val to = interval.substring(index + 1, interval.length).trim
         val setupBackground: DBIO[Unit] = DBIO.seq(
           a_backgrounds += AcademicBackground(None,
             title,
@@ -136,94 +136,8 @@ object Application extends Controller {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  //Get elements for business background
-  private def getRole(element : Element) : String = {
-    try{
-      if(element.children().get(0).children().get(0).children().get(0).text().equals("")){
-        return element.children().get(0).children().get(0).children().get(1).text()
-      }
-      element.children().get(0).children().get(0).children().get(0).text()
-    }catch{
-      case iob : IndexOutOfBoundsException => ""
-    }
-
-  }
-
-  private def getInstitute(element : Element) : String = {
-    try{
-      if(element.children().get(0).children().get(0).children().get(0).text().equals("")){
-      return element.children().get(0).children().get(0).children().get(2).text()
-      }
-      element.children().get(0).children().get(0).children().get(1).text()
-    } catch{
-      case iob : IndexOutOfBoundsException => ""
-    }
-  }
-
-  private def getWhen(element : Element) : String = {
-    try{
-      element.children().get(0).children().get(1).text()
-    }catch{
-      case iob : IndexOutOfBoundsException => ""
-    }
-  }
-
-  private def getDesc(element : Element) : String = {
-    try{
-      element.children().get(0).children().get(2).text()
-    }catch{
-      case iob : IndexOutOfBoundsException => ""
-    }
-  }
-
   private def validateBusiness(role : String, institute : String, when : String, desc : String): Boolean = {
     !role.isEmpty && !institute.isEmpty && !when.isEmpty && !desc.isEmpty
-  }
-
-  //Get elements for academic background
-  private def getAcademy(element : Element) : String = {
-    try{
-      if(element.children().get(0).children().get(0).text().equals("")){
-        return element.children().get(0).children().get(1).children().get(0).text()
-      }
-
-      if(element.children().get(0).children().get(0).children().get(0).text().equals("")){
-        return element.children().get(0).children().get(0).children().get(1).children().get(0).text()
-      }
-      element.children().get(0).children().get(0).children().get(0).children().get(0).text()
-    }catch{
-      case iob : IndexOutOfBoundsException => ""
-    }
-  }
-
-  private def getTitle(element : Element) : String = {
-    try{
-      if(element.children().get(0).children().get(0).text().equals("")){
-        return element.children().get(0).children().get(1).children().get(1).text()
-      }
-
-      if(element.children().get(0).children().get(0).children().get(0).text().equals("")){
-        return element.children().get(0).children().get(0).children().get(1).children().get(1).text()
-      }
-      element.children().get(0).children().get(0).children().get(0).children().get(1).text()
-    }catch{
-      case iob : IndexOutOfBoundsException => ""
-    }
-  }
-
-  private def getInterval(element : Element) : String = {
-    try{
-      if(element.children().get(0).children().get(0).text().equals("")){
-        return element.children().get(0).children().get(2).text()
-      }
-
-      if(element.children().get(0).children().get(0).children().get(0).text().equals("")){
-        return element.children().get(0).children().get(0).children().get(2).text()
-      }
-      element.children().get(0).children().get(0).children().get(1).text()
-    }catch{
-      case iob : IndexOutOfBoundsException => ""
-    }
   }
 
   private def validateAcademic(academy : String, title : String, interval : String): Boolean = {
