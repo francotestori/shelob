@@ -12,10 +12,11 @@ object Application extends Controller {
 
     try{
 
-    val urls : List[String] = List("http://ar.linkedin.com/in/ricardoanibalpasquini",
-      "https://ar.linkedin.com/in/arielDarioPerez/es","https://ar.linkedin.com/in/luisrgarcia",
-      "https://ar.linkedin.com/pub/franco-testori/38/814/197",
-      "https://ar.linkedin.com/in/horaciorodriguezlarreta")
+    val urls : List[String] = List("http://ar.linkedin.com/in/arielDarioPerez/es",
+      "https://ar.linkedin.com/in/horaciorodriguezlarreta",
+      "http://ar.linkedin.com/in/ricardoanibalpasquini",
+      "https://ar.linkedin.com/in/luisrgarcia",
+      "https://ar.linkedin.com/pub/franco-testori/38/814/197")
 
     LinkedInWizard.run(urls)
 

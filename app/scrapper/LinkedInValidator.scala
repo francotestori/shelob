@@ -11,8 +11,8 @@ object LinkedInValidator {
     !url.isEmpty && !"".equals(url) && url.contains("linkedin")
   }
 
-  def validateBusiness(role : String, institute : String, interval : String, desc : String): Boolean = {
-    !role.isEmpty && !institute.isEmpty && !interval.isEmpty && !desc.isEmpty
+  def validateBusiness(role : String, institute : String, interval : String): Boolean = {
+    !role.isEmpty && !institute.isEmpty && !interval.isEmpty
   }
 
   def validateAcademic(academy : String, title : String, interval : String): Boolean = {

@@ -1,11 +1,11 @@
-package scrapper.strategies
+package scrapper.strategies.spiders
 
 import org.jsoup.nodes.Element
 
 /**
  * Created by franco on 1/9/2015.
  */
-object IntervalStrategy {
+object IntervalSpider {
 
   def businessFirst(element : Element): String = {
     try {
@@ -14,6 +14,15 @@ object IntervalStrategy {
       case iob: IndexOutOfBoundsException => ""
     }
   }
+
+  def businessSecond(element : Element): String = {
+    try {
+      element.children().get(1).text()
+    } catch {
+      case iob: IndexOutOfBoundsException => ""
+    }
+  }
+
 
   def academyFirst(element : Element): String = {
     try {

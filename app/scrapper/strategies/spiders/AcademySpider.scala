@@ -1,11 +1,11 @@
-package scrapper.strategies
+package scrapper.strategies.spiders
 
 import org.jsoup.nodes.Element
 
 /**
  * Created by franco on 1/9/2015.
  */
-object AcademyStrategy {
+object AcademySpider {
 
   def first(element: Element): String = {
     try {

@@ -8,6 +8,7 @@ import org.jsoup.{Jsoup}
 import org.jsoup.nodes.{Element, Document}
 import org.jsoup.select.Elements
 import scrapper.strategies._
+import scrapper.strategies.spiders.{TitleSpider, IntervalSpider, AcademySpider}
 
 import scala.concurrent.{ExecutionContext, Await}
 import scala.concurrent.duration.Duration
@@ -73,14 +74,11 @@ class LinkedInWizard {
   private def getExperiences : Elements = document.getElementsByAttributeValueMatching("id",Pattern.compile("experience-[0-9]+[0-9]*"))
 
   private def processBusiness(element : Element, owner : Long) ={
-    val name = InstituteStrategy.first(element).toUpperCase
-    val role = RoleStrategy.first(element)
-    val interval = IntervalStrategy.businessFirst(element)
-    val info = DescriptionStrategy.first(element)
+    val business : (String,String,String,String) = BusinessBackgroundStrategy.apply(element)
 
-    if(LinkedInValidator.validateBusiness(role,name,interval,info)){
-      val institution = insertBusinessInstitution(name)
-      insertBusinessBackground(role,institution.id.get,owner,interval,info)
+    if(LinkedInValidator.validateBusiness(business._1,business._2,business._3)){
+      val institution = insertBusinessInstitution(business._2)
+      insertBusinessBackground(business._1,institution.id.get,owner,business._3,business._4)
     }
   }
 
@@ -104,9 +102,9 @@ class LinkedInWizard {
   private def getAcademics : Elements = document.getElementsByAttributeValueMatching("id",Pattern.compile("education-[0-9]+[0-9]*"))
 
   private def processAcademics(element : Element, owner : Long) ={
-    val name = AcademyStrategy.first(element).toUpperCase
-    val title = TitleStrategy.first(element)
-    val interval = IntervalStrategy.academyFirst(element)
+    val name = AcademySpider.first(element).toUpperCase
+    val title = TitleSpider.first(element)
+    val interval = IntervalSpider.academyFirst(element)
 
     if(LinkedInValidator.validateAcademic(name,title,interval)){
       val institution = insertAcademicInstitution(name)
