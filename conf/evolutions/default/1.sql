@@ -44,7 +44,7 @@ what_ive_built              varchar(1000),
 what_i_do                   varchar(1000),
 investor                    boolean,
 )
-AS SELECT * FROM CSVREAD('/home/lucas/Documents/users-argentina.csv');
+AS SELECT * FROM CSVREAD('C:\users-argentina.csv');
 
 create table LINKEDIN_OWNER(
 id                          bigint auto_increment not null,
