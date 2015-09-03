@@ -23,7 +23,7 @@ create table LINKEDIN_OWNER(
 id                          bigint auto_increment not null,
 -- tangela_owner_id            bigint not null,
 name                        varchar(255),
-location                    varchar(255),
+location                    varchar(800),
 industry                    varchar(255),
 website                     varchar(255) not null unique,
 constraint pk_linkedin_owner primary key (id)

@@ -4,7 +4,7 @@ import java.util.regex.Pattern
 
 import daos._
 import models.{AcademicInstitution, BusinessInstitution, LinkedInOwner}
-import org.jsoup.{Jsoup}
+import org.jsoup.{HttpStatusException, Jsoup}
 import org.jsoup.nodes.{Element, Document}
 import org.jsoup.select.Elements
 import scrapper.strategies._
@@ -37,29 +37,63 @@ class LinkedInWizard {
 
         if(LinkedInValidator.validateUrl(urls(i))) {
 
-          switch(urls(i))
-          val owner: Long = insertOwner.id.get
-          insertBusinessInfo(owner)
-          insertAcademicInfo(owner)
+          switch(urls,i)
 
+          if(LinkedInValidator.validateOwner(getOwnerName,getOwnerLocation,getOwnerIndustry)) {
+            val owner: Long = insertOwner.id.get
+            insertBusinessInfo(owner)
+            insertAcademicInfo(owner)
+          }
         }
       }
 
     }
   }
 
-  private def switch(initUrl : String)={
-    url = initUrl
-    document = Jsoup.connect(initUrl).get}
+  private def switch(urls : List[String], n : Int) : Boolean ={
+    url = urls(n)
+    println(url)
+    //Set TimeOut to 10 seconds
+    try{
+      document = Jsoup.connect(url).timeout(10*1000).get
+      true
+    }
+    catch {
+      case se : HttpStatusException => switch(urls,n + 1)
+    }
+  }
 
   /**LinkedInOwner methods*/
   private def insertOwner: LinkedInOwner = {
     Await.result(ownerDAO.insertIfNotExists(getOwnerName, getOwnerLocation, getOwnerIndustry, url), Duration.Inf)
   }
 
-  private def getOwnerName : String = document.select(".full-name").get(0).text()
-  private def getOwnerLocation : String = document.select(".locality").get(0).text()
-  private def getOwnerIndustry : String = document.select(".industry").get(0).text()
+  private def getOwnerName : String = {
+    try{
+      document.select(".full-name").get(0).text()
+    }
+    catch {
+      case iob: IndexOutOfBoundsException => ""
+    }
+  }
+  private def getOwnerLocation : String = {
+
+    try{
+      document.select(".locality").get(0).text()
+    }
+    catch {
+      case iob: IndexOutOfBoundsException => ""
+    }
+  }
+
+  private def getOwnerIndustry : String = {
+    try{
+      document.select(".industry").get(0).text()
+    }
+    catch {
+      case iob: IndexOutOfBoundsException => ""
+    }
+  }
 
   /**Business Institution & Background methods*/
   private def insertBusinessInfo(owner : Long) = {
