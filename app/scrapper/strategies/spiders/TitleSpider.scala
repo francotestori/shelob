@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element
  */
 object TitleSpider {
 
-  def first(element : Element): String = {
+  def run(element : Element): String = {
     try {
       if (element.children().get(0).children().get(0).text().equals("")) {
         return element.children().get(0).children().get(1).children().get(1).text()

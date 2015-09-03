@@ -17,28 +17,18 @@ class BusinessBackgroundStrategy {
     (role,institute,interval,info)
   }
 
-  private def scrapInfo(element: Element) : String = {
-    DescriptionSpider.run(element)
-  }
+  private def scrapInfo(element: Element) : String = DescriptionSpider.run(element)
 
-  private def scrapInterval(element: Element) : String = {
-    IntervalSpider.runAcademy(element)
-  }
+  private def scrapInterval(element: Element) : String = IntervalSpider.runBusiness(element)
 
-  private def scrapInstitute(element: Element) : (String) = {
-    InstituteSpider.run(element)
-  }
+  private def scrapInstitute(element: Element) : (String) = InstituteSpider.run(element)
 
-  private def scrapRole(element: Element) : String = {
-    RoleSpider.run(element)
-  }
+  private def scrapRole(element: Element) : String = RoleSpider.run(element)
 
 }
 
 object BusinessBackgroundStrategy {
 
-  def apply(element: Element): (String,String,String,String)={
-    new BusinessBackgroundStrategy().apply(element)
-  }
+  def apply(element: Element): (String,String,String,String)= new BusinessBackgroundStrategy().apply(element)
 
 }

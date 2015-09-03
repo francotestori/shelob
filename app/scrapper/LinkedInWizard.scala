@@ -8,7 +8,6 @@ import org.jsoup.{Jsoup}
 import org.jsoup.nodes.{Element, Document}
 import org.jsoup.select.Elements
 import scrapper.strategies._
-import scrapper.strategies.spiders.{TitleSpider, IntervalSpider, AcademySpider}
 
 import scala.concurrent.{ExecutionContext, Await}
 import scala.concurrent.duration.Duration
@@ -74,11 +73,11 @@ class LinkedInWizard {
   private def getExperiences : Elements = document.getElementsByAttributeValueMatching("id",Pattern.compile("experience-[0-9]+[0-9]*"))
 
   private def processBusiness(element : Element, owner : Long) ={
-    val business : (String,String,String,String) = BusinessBackgroundStrategy.apply(element)
+    val background : (String,String,String,String) = BusinessBackgroundStrategy.apply(element)
 
-    if(LinkedInValidator.validateBusiness(business._1,business._2,business._3)){
-      val institution = insertBusinessInstitution(business._2)
-      insertBusinessBackground(business._1,institution.id.get,owner,business._3,business._4)
+    if(LinkedInValidator.validateBusiness(background._1,background._2,background._3)){
+      val institution = insertBusinessInstitution(background._2)
+      insertBusinessBackground(background._1,institution.id.get,owner,background._3,background._4)
     }
   }
 
@@ -102,13 +101,11 @@ class LinkedInWizard {
   private def getAcademics : Elements = document.getElementsByAttributeValueMatching("id",Pattern.compile("education-[0-9]+[0-9]*"))
 
   private def processAcademics(element : Element, owner : Long) ={
-    val name = AcademySpider.first(element).toUpperCase
-    val title = TitleSpider.first(element)
-    val interval = IntervalSpider.runAcademy(element)
+    val background = AcademicBackgroundStrategy.apply(element)
 
-    if(LinkedInValidator.validateAcademic(name,title,interval)){
-      val institution = insertAcademicInstitution(name)
-      insertAcademicBackground(title,institution.id.get,owner,interval)
+    if(LinkedInValidator.validateAcademic(background._1,background._2,background._3)){
+      val institution = insertAcademicInstitution(background._1)
+      insertAcademicBackground(background._2,institution.id.get,owner,background._3)
     }
   }
 
