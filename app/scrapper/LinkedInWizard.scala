@@ -66,7 +66,7 @@ class LinkedInWizard {
   private def insertBusinessInfo(owner : Long) = {
     val businessInfo : Elements = getExperiences
 
-    for(i <- 0 to businessInfo.size() - 1){
+    for(i <- 0 to businessInfo.size() - 1 by 2){
       processBusiness(businessInfo.get(i),owner)
     }
   }
@@ -94,7 +94,7 @@ class LinkedInWizard {
   private def insertAcademicInfo(owner : Long) = {
     val academicInfo : Elements = getAcademics
 
-    for(i <- 0 to academicInfo.size() - 1){
+    for(i <- 0 to academicInfo.size() - 1 by 2){
       processAcademics(academicInfo.get(i),owner)
     }
   }
@@ -104,7 +104,7 @@ class LinkedInWizard {
   private def processAcademics(element : Element, owner : Long) ={
     val name = AcademySpider.first(element).toUpperCase
     val title = TitleSpider.first(element)
-    val interval = IntervalSpider.academyFirst(element)
+    val interval = IntervalSpider.runAcademy(element)
 
     if(LinkedInValidator.validateAcademic(name,title,interval)){
       val institution = insertAcademicInstitution(name)

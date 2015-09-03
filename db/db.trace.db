@@ -1,0 +1,28 @@
+09-02 20:39:14 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLException: Tabla "PLAY_EVOLUTIONS" no encontrada
+Table "PLAY_EVOLUTIONS" not found; SQL statement:
+select id, hash, apply_script, revert_script, state, last_problem from play_evolutions where state like 'applying_%' [42102-175]
+09-02 20:39:23 jdbc[17]: exception
+org.h2.jdbc.JdbcSQLException: Valor demasiado largo para la columna "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"
+Value too long for column "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"; SQL statement:
+insert into "BUSINESS_INSTITUTION" ("NAME","DESCRIPTION","SECTOR","LOCATION")  values (?,?,?,?) [22001-175]
+09-02 20:43:24 jdbc[15]: exception
+org.h2.jdbc.JdbcSQLException: Valor demasiado largo para la columna "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"
+Value too long for column "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"; SQL statement:
+insert into "BUSINESS_INSTITUTION" ("NAME","DESCRIPTION","SECTOR","LOCATION")  values (?,?,?,?) [22001-175]
+09-02 20:51:33 jdbc[22]: exception
+org.h2.jdbc.JdbcSQLException: Valor demasiado largo para la columna "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"
+Value too long for column "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"; SQL statement:
+insert into "BUSINESS_INSTITUTION" ("NAME","DESCRIPTION","SECTOR","LOCATION")  values (?,?,?,?) [22001-175]
+09-02 20:53:19 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLException: Valor demasiado largo para la columna "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"
+Value too long for column "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"; SQL statement:
+insert into "BUSINESS_INSTITUTION" ("NAME","DESCRIPTION","SECTOR","LOCATION")  values (?,?,?,?) [22001-175]
+09-02 20:54:22 jdbc[12]: exception
+org.h2.jdbc.JdbcSQLException: Valor demasiado largo para la columna "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"
+Value too long for column "NAME VARCHAR(255) NOT NULL": "STRINGDECODE('Ser responsable por el desarrollo de una colaboraci\u00f3n con nuestros clientes al trabajar directamente con el e... (1456)"; SQL statement:
+insert into "BUSINESS_INSTITUTION" ("NAME","DESCRIPTION","SECTOR","LOCATION")  values (?,?,?,?) [22001-175]
+09-02 21:05:27 jdbc[18]: exception
+org.h2.jdbc.JdbcSQLException: Valor demasiado largo para la columna "DESCRIPTION VARCHAR(1600)": "STRINGDECODE('Reclutador en consultora de RRHH l\u00edder en b\u00fasquedas ejecutivas y soluciones de reclutamiento de alto imp... (1603)"
+Value too long for column "DESCRIPTION VARCHAR(1600)": "STRINGDECODE('Reclutador en consultora de RRHH l\u00edder en b\u00fasquedas ejecutivas y soluciones de reclutamiento de alto imp... (1603)"; SQL statement:
+insert into "BUSINESS_BACKGROUND" ("ROLE","BUSINESS_INSTITUTION_ID","LINKEDIN_OWNER_ID","INTERVAL","DESCRIPTION")  values (?,?,?,?,?) [22001-175]

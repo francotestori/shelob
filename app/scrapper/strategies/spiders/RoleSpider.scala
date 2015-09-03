@@ -7,19 +7,15 @@ import org.jsoup.nodes.Element
  */
 object RoleSpider {
 
-  def first(element : Element, n : Int): String = {
+  def run(element : Element): String = {
     try {
-      element.children().get(0).children().get(0).children().get(n).text()
+      if (element.children().get(0).children().get(0).children().get(0).text().equals("")) {
+        return element.children().get(0).children().get(0).children().get(1).text()
+      }
+      element.children().get(0).children().get(0).children().get(0).text()
     } catch {
       case iob: IndexOutOfBoundsException => ""
     }
   }
 
-  def second(element : Element, n : Int): String = {
-    try {
-      element.children().get(0).children().get(n).text()
-    } catch {
-      case iob: IndexOutOfBoundsException => ""
-    }
-  }
 }

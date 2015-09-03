@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element
  */
 object DescriptionSpider {
 
-  def first(element: Element): String = {
+  def run(element: Element): String = {
     try {
       element.children().get(0).children().get(2).text()
     } catch {
@@ -15,11 +15,4 @@ object DescriptionSpider {
     }
   }
 
-  def second(element: Element): String = {
-    try {
-      element.children().get(2).text()
-    } catch {
-      case iob: IndexOutOfBoundsException => ""
-    }
-  }
 }
