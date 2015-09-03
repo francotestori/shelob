@@ -50,9 +50,11 @@ class LinkedInWizard {
     }
   }
   
-  def getTableData(tableName : String) = tableName match {
-    case "LinkedInOwner" => Await.result(ownerDAO.getAllRows, Duration.Inf)
-  }
+  def getOwnerTable = Await.result(ownerDAO.getAllRows, Duration.Inf)
+  def getInstitutionTable = Await.result(institutionDAO.getAllRows, Duration.Inf)
+  def getBBTable = Await.result(bBackgroundDAO.getAllRows, Duration.Inf)
+  def getAcademyTable = Await.result(academyDAO.getAllRows, Duration.Inf)
+  def getABTable = Await.result(aBackgroundDAO.getAllRows, Duration.Inf)
 
   private def switch(urls : List[String], n : Int) : Boolean ={
     url = urls(n)
@@ -161,5 +163,9 @@ object LinkedInWizard {
     new LinkedInWizard().run(urls)
   }
 
-  def getTableData(tableName : String) = new LinkedInWizard().getTableData(tableName)
+  def getOwnerTable = new LinkedInWizard().getOwnerTable
+  def getInstitutionTable = new LinkedInWizard().getInstitutionTable
+  def getBBTable = new LinkedInWizard().getBBTable
+  def getAcademyTable = new LinkedInWizard().getAcademyTable
+  def getABTable = new LinkedInWizard().getABTable
 }
