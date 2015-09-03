@@ -32,5 +32,6 @@ class LinkedInOwnerDAO (implicit ec: ExecutionContext){
     else Future(exists.get)
   }
 
+  def getAllRows : Future[Seq[LinkedInOwner]] = db.run(linkedInOwners.drop(0).result)
 
 }

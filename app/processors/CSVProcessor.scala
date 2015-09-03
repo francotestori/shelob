@@ -2,7 +2,8 @@ package processors
 
 import java.io.File
 
-import com.github.tototoshi.csv.CSVReader
+import com.github.tototoshi.csv.{CSVWriter, CSVReader}
+import models.LinkedInOwner
 
 /**
  * Created by franco on 2/9/2015.
@@ -20,8 +21,20 @@ class CSVProcessor {
 
   }
 
+  def writeLinkedInOwners (list : Seq[LinkedInOwner], fileName : String): Unit = {
+    val writer = CSVWriter.open(fileName, append = true)
+
+    writer.writeRow(List("Id", "Name", "Location", "Industry", "Website"))
+    list.foreach(elem => writer.writeRow(List(elem.id.get, elem.name, elem.location, elem.industry, elem.website)))
+
+    writer.close()
+  }
+
 }
 
 object CSVProcessor {
   def process (file : String): List[String] = new CSVProcessor().process(file)
+  def write (tableType : String, list: Seq[LinkedInOwner], fileName : String) = tableType match {
+    case "LinkedInOwner" => new CSVProcessor().writeLinkedInOwners(list, fileName)
+  }
 }

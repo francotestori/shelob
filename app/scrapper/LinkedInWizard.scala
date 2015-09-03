@@ -48,18 +48,28 @@ class LinkedInWizard {
     }
   }
 
+  def getTableData(tableName : String) = tableName match {
+    case "LinkedInOwner" => Await.result(ownerDAO.getAllRows, Duration.Inf)
+  }
+
   private def switch(initUrl : String)={
     url = initUrl
-    document = Jsoup.connect(initUrl).get}
+    try {
+      document = Jsoup.connect(initUrl).get
+    }
+    catch {
+      case e : Exception =>
+    }
+  }
 
   /**LinkedInOwner methods*/
   private def insertOwner: LinkedInOwner = {
     Await.result(ownerDAO.insertIfNotExists(getOwnerName, getOwnerLocation, getOwnerIndustry, url), Duration.Inf)
   }
 
-  private def getOwnerName : String = document.select(".full-name").get(0).text()
-  private def getOwnerLocation : String = document.select(".locality").get(0).text()
-  private def getOwnerIndustry : String = document.select(".industry").get(0).text()
+  private def getOwnerName : String = document.select(".full-name").text()
+  private def getOwnerLocation : String = document.select(".locality").text()
+  private def getOwnerIndustry : String = document.select(".industry").text()
 
   /**Business Institution & Background methods*/
   private def insertBusinessInfo(owner : Long) = {
@@ -123,4 +133,6 @@ object LinkedInWizard {
   def run(urls : List[String]) = {
     new LinkedInWizard().run(urls)
   }
+
+  def getTableData(tableName : String) = new LinkedInWizard().getTableData(tableName)
 }

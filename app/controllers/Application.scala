@@ -13,9 +13,11 @@ object Application extends Controller {
 
     try{
 
-    val urls : List[String] = CSVProcessor.process("C:\\users-argentina.csv")
+    val urls : List[String] = CSVProcessor.process("/home/lucas/Documents/users-argentina.csv")
 
-    LinkedInWizard.run(urls)
+//    LinkedInWizard.run(urls)
+
+    CSVProcessor.write("LinkedInOwner", LinkedInWizard.getTableData("LinkedInOwner"), "/home/lucas/Documents/resultado.csv")
 
     }finally db.close()
 
