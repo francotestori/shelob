@@ -1,6 +1,6 @@
 package daos
 
-import models.{LinkedInOwner, AcademicBackground, AcademicBackgrounds}
+import models.{AcademicBackground, AcademicBackgrounds}
 import slick.lifted.TableQuery
 
 import scala.concurrent.duration.Duration
@@ -32,4 +32,6 @@ class AcademicBackgroundDAO (implicit ec: ExecutionContext){
     if(exists == None) insert(title,academicInstitutionId,linkedinOwnerId,interval,description)
     else Future(exists.get)
   }
+
+  def getAllRows : Future[Seq[AcademicBackground]] = db.run(academicBackgrounds.drop(0).result)
 }

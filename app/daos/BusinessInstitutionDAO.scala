@@ -33,4 +33,6 @@ class BusinessInstitutionDAO (implicit ec: ExecutionContext){
     else Future(exists.get)
   }
 
+  def getAllRows : Future[Seq[BusinessInstitution]] = db.run(businessInstitutions.drop(0).result)
+
 }

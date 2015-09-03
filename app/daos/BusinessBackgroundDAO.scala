@@ -31,4 +31,6 @@ class BusinessBackgroundDAO (implicit ec: ExecutionContext){
     if(exists == None) insert(role,businessInstitution_id,linkedinOwnerId,interval,description)
     else Future(exists.get)
   }
+
+  def getAllRows : Future[Seq[BusinessBackground]] = db.run(businessBackgrounds.drop(0).result)
 }
