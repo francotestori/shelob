@@ -1,6 +1,7 @@
 package controllers
 
 import play.api.mvc.{Action, Controller}
+import processors.CSVProcessor
 import scrapper.LinkedInWizard
 
 import slick.driver.H2Driver.api._
@@ -12,11 +13,7 @@ object Application extends Controller {
 
     try{
 
-    val urls : List[String] = List("http://ar.linkedin.com/in/arielDarioPerez/es",
-      "https://ar.linkedin.com/in/horaciorodriguezlarreta",
-      "http://ar.linkedin.com/in/ricardoanibalpasquini",
-      "https://ar.linkedin.com/in/luisrgarcia",
-      "https://ar.linkedin.com/pub/franco-testori/38/814/197")
+    val urls : List[String] = CSVProcessor.process("C:\\users-argentina.csv")
 
     LinkedInWizard.run(urls)
 
