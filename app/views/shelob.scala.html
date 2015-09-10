@@ -1,0 +1,32 @@
+@(title : String)
+
+@css = {
+  <link rel="stylesheet" href="@routes.Assets.at("dropzone/dropzone.css")">
+  <link rel="stylesheet" href="@routes.Assets.at("dropzone/style.css")">
+}
+
+@js = {
+  <script src="@routes.Assets.at("dropzone/dropzone.js")"></script>
+}
+
+  @nav(title,css, js){
+
+
+  <div class="row" style="text-align: center">
+
+        <h1 id="try-it-out">Feed me!</h1>
+
+        <div id="dropzone">
+
+          @helper.form(action = routes.Application.upload,'class -> "dropzone dz-clickable", 'enctype -> "multipart/form-data") {
+            <div class="dz-message">Drop files here or click to upload.</div>
+          }
+
+          <br>
+
+          <button class="btn-primary" style="align-content: center">Shelob</button>
+
+        </div>
+
+  </div>
+}

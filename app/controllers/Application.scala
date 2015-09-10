@@ -8,13 +8,22 @@ import scrapper.LinkedInWizard
 import slick.driver.H2Driver.api._
 
 object Application extends Controller {
+
   def index = Action {
 
+//    apply("C:\\users-argentina.csv")
+
+//    createZip
+
+    Ok(views.html.shelob("Shelob"))
+  }
+
+  def apply(file : String) = {
     val db = Database.forURL("jdbc:h2:file:~/projects/shelob/db/db","sa","")
 
     try{
 
-    val urls : List[String] = CSVProcessor.process("C:\\users-argentina.csv")
+      val urls : List[String] = CSVProcessor.process(file)
 
       LinkedInWizard.run(urls)
 
@@ -24,18 +33,34 @@ object Application extends Controller {
       CSVProcessor.writeAI(LinkedInWizard.getAcademyTable, "C:\\Users\\franco\\shelobItems\\academia.csv")
       CSVProcessor.writeAB(LinkedInWizard.getABTable, "C:\\Users\\franco\\shelobItems\\historial-academico.csv")
 
-      ZipGenerator.zip("~\\shelob.zip",
+      createZip
 
-        Iterable("C:\\Users\\franco\\shelobItems\\personas.csv",
+    }finally db.close()
+  }
+
+  def createZip = {
+    ZipGenerator.zip("~\\shelob.zip",
+
+      Iterable("C:\\Users\\franco\\shelobItems\\personas.csv",
         "C:\\Users\\franco\\shelobItems\\negocio.csv",
         "C:\\Users\\franco\\shelobItems\\experiencia.csv",
         "C:\\Users\\franco\\shelobItems\\academia.csv",
         "C:\\Users\\franco\\shelobItems\\historial-academico.csv"
       ))
+  }
 
-    }finally db.close()
-
-    Ok(views.html.index("Your new application is ready."))
+  def upload = Action(parse.multipartFormData) { request =>
+    request.body.file("picture").map { picture =>
+      import java.io.File
+      val filename = picture.filename
+      val contentType = picture.contentType
+      picture.ref.moveTo(new File("/tmp/picture"))
+      Ok("File uploaded")
+    }.getOrElse {
+      Redirect(routes.Application.index).flashing(
+        "error" -> "Missing file"
+      )
+    }
   }
 
 }
