@@ -13,10 +13,10 @@ object Application extends Controller {
 
 //    apply("C:\\users-argentina.csv")
 
-//    createZip
-
     Ok(views.html.shelob("Shelob"))
   }
+
+  /**Populates db and generate zip File with Table CSVs included*/
 
   def apply(file : String) = {
     val db = Database.forURL("jdbc:h2:file:~/projects/shelob/db/db","sa","")
@@ -33,21 +33,25 @@ object Application extends Controller {
       CSVProcessor.writeAI(LinkedInWizard.getAcademyTable, "C:\\Users\\franco\\shelobItems\\academia.csv")
       CSVProcessor.writeAB(LinkedInWizard.getABTable, "C:\\Users\\franco\\shelobItems\\historial-academico.csv")
 
-      createZip
+      createZip("~\\shelob.zip",
+        Iterable("C:\\Users\\franco\\shelobItems\\personas.csv",
+          "C:\\Users\\franco\\shelobItems\\negocio.csv",
+          "C:\\Users\\franco\\shelobItems\\experiencia.csv",
+          "C:\\Users\\franco\\shelobItems\\academia.csv",
+          "C:\\Users\\franco\\shelobItems\\historial-academico.csv"
+        ))
 
     }finally db.close()
   }
 
-  def createZip = {
-    ZipGenerator.zip("~\\shelob.zip",
+  /**Redirects to ZipGenerator to create zip in a determined path with a series of includes*/
 
-      Iterable("C:\\Users\\franco\\shelobItems\\personas.csv",
-        "C:\\Users\\franco\\shelobItems\\negocio.csv",
-        "C:\\Users\\franco\\shelobItems\\experiencia.csv",
-        "C:\\Users\\franco\\shelobItems\\academia.csv",
-        "C:\\Users\\franco\\shelobItems\\historial-academico.csv"
-      ))
+  def createZip(zipFilePath : String, includes : Iterable[String] ) = {
+
+    ZipGenerator.zip(zipFilePath,includes)
   }
+
+  /**Adds input CSV into a determined path so it can later be analyzed*/
 
   def upload = Action(parse.multipartFormData) { request =>
     request.body.file("picture").map { picture =>
