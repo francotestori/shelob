@@ -12,7 +12,7 @@ import slick.driver.H2Driver.api._
  */
 class LinkedInOwnerDAO (implicit ec: ExecutionContext){
 
-  private val db = Database.forURL("jdbc:h2:file:~/projects/shelob/db/db","sa","")
+  private val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
   private val linkedInOwners = TableQuery[LinkedInOwners]
 
   def insert(name:String,location:String,industry:String,website:String) : Future[LinkedInOwner] = db.run{

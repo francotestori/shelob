@@ -13,7 +13,7 @@ import slick.driver.H2Driver.api._
  */
 class AcademicBackgroundDAO (implicit ec: ExecutionContext){
 
-  private val db = Database.forURL("jdbc:h2:file:~/projects/shelob/db/db","sa","")
+  private val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
   private val academicBackgrounds = TableQuery[AcademicBackgrounds]
 
   def insert(title:String,academicInstitutionId:Long ,linkedinOwnerId:Long, interval:String,description:String) : Future[AcademicBackground] = db.run{

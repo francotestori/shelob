@@ -1,0 +1,44 @@
+@(title : String)
+
+@css = {
+  <link rel="stylesheet" href="@routes.Assets.at("dropzone/dropzone.css")">
+  <link rel="stylesheet" href="@routes.Assets.at("dropzone/style.css")">
+}
+
+@js = {
+  <script src="@routes.Assets.at("javascripts/shelob/shelob.js")"></script>
+}
+
+  @nav(title,css, js){
+
+    <div class="row" style="text-align: center">
+
+        <h1 id="try-it-out">Feed me!</h1>
+
+        <div class="container" style="margin-top: 20px">
+
+        @helper.form(action = routes.Uploader.upload(),'enctype -> "multipart/form-data") {
+            <span class="dz-message">Click to upload.</span>
+
+            <div class="row">
+                <div class="col-lg-6 col-sm-6 col-12">
+                    <div class="input-group" style="left:50%">
+                        <span class="input-group-btn">
+                            <span class="btn btn-primary btn-file">
+                                Browse&hellip; <input type="file" name="fileUpload" multiple>
+                            </span>
+                        </span>
+                        <input type="text" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <br>
+                <br>
+                <input type="submit" class="btn btn-primary btn-file" value="Upload!">
+            </div>
+        }
+
+        </div>
+
+    </div>
+}
