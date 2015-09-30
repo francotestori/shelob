@@ -1,4 +1,4 @@
-@(title : String)
+@( file : String, title : String)
 
 @css = {
 
@@ -9,5 +9,26 @@
 }
 
 @nav(title,css, js){
-  
+
+    <div class="row" style="text-align: center">
+
+        <span id="file">
+            <img src="@routes.Assets.at("images/CSV.png")" style="width: 200px">
+            <h1>@file</h1>
+        </span>
+
+        <button class="btn btn-success btn-file">Proccess</button>
+
+        <br>
+        <br>
+
+        <div class="progress">
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="">
+
+            </div>
+        </div>
+
+    </div>
+
+
 }

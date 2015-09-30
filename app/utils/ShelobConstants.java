@@ -8,5 +8,6 @@ public class ShelobConstants {
 
     public static final String ZIPPER_PATH = "C:\\Users\\franco\\shelobItems\\";
     public static final String UPLOADER_PATH = "C:\\Users\\franco\\shelobUploads\\";
+    public static final String SHELOB_ZIP = "~\\shelob.zip";
 
 }

@@ -19,6 +19,8 @@ import ExecutionContext.Implicits.global
  */
 class LinkedInWizard {
 
+  private var index : Long = 0
+
   private var url : String = null
   private var document : Document = null
 
@@ -39,6 +41,8 @@ class LinkedInWizard {
 
           switch(urls,i)
 
+          index = i
+
           if(LinkedInValidator.validateOwner(getOwnerName,getOwnerLocation,getOwnerIndustry)) {
             val owner: Long = insertOwner.id.get
             insertBusinessInfo(owner)
@@ -55,6 +59,8 @@ class LinkedInWizard {
   def getBBTable = Await.result(bBackgroundDAO.getAllRows, Duration.Inf)
   def getAcademyTable = Await.result(academyDAO.getAllRows, Duration.Inf)
   def getABTable = Await.result(aBackgroundDAO.getAllRows, Duration.Inf)
+
+  def getIndex = index
 
   private def switch(urls : List[String], n : Int) : Boolean ={
     url = urls(n)
@@ -159,13 +165,21 @@ class LinkedInWizard {
 }
 
 object LinkedInWizard {
+
+  val wizard  = new LinkedInWizard()
+  var size : Long = 0
+
   def run(urls : List[String]) = {
-    new LinkedInWizard().run(urls)
+    size = urls.size
+    wizard.run(urls)
   }
 
-  def getOwnerTable = new LinkedInWizard().getOwnerTable
-  def getInstitutionTable = new LinkedInWizard().getInstitutionTable
-  def getBBTable = new LinkedInWizard().getBBTable
-  def getAcademyTable = new LinkedInWizard().getAcademyTable
-  def getABTable = new LinkedInWizard().getABTable
+  def getIndex = wizard.getIndex
+  def getSize = size
+
+  def getOwnerTable = wizard.getOwnerTable
+  def getInstitutionTable = wizard.getInstitutionTable
+  def getBBTable = wizard.getBBTable
+  def getAcademyTable = wizard.getAcademyTable
+  def getABTable = wizard.getABTable
 }

@@ -1,4 +1,4 @@
-name := """uploader"""
+name := "Shelob"
 
 version := "1.0-SNAPSHOT"
 

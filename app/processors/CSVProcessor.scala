@@ -70,15 +70,17 @@ class CSVProcessor {
 
 object CSVProcessor {
 
-  def process (file : String): List[String] = new CSVProcessor().process(file)
+  val processor = new CSVProcessor()
 
-  def writeLO (list: Seq[LinkedInOwner], fileName : String) = new CSVProcessor().writeLinkedInOwners(list, fileName)
+  def process (file : String): List[String] = processor.process(file)
 
-  def writeBI (list: Seq[BusinessInstitution], fileName : String) = new CSVProcessor().writeBusinessInstitution(list,fileName)
+  def writeLO (list: Seq[LinkedInOwner], fileName : String) = processor.writeLinkedInOwners(list, fileName)
 
-  def writeBB (list: Seq[BusinessBackground], fileName : String) = new CSVProcessor().writeBusinessBackground(list,fileName)
+  def writeBI (list: Seq[BusinessInstitution], fileName : String) = processor.writeBusinessInstitution(list,fileName)
 
-  def writeAI (list: Seq[AcademicInstitution], fileName : String) = new CSVProcessor().writeAcademicInstitution(list,fileName)
+  def writeBB (list: Seq[BusinessBackground], fileName : String) = processor.writeBusinessBackground(list,fileName)
 
-  def writeAB (list: Seq[AcademicBackground], fileName : String) = new CSVProcessor().writeAcademicBackground(list,fileName)
+  def writeAI (list: Seq[AcademicInstitution], fileName : String) = processor.writeAcademicInstitution(list,fileName)
+
+  def writeAB (list: Seq[AcademicBackground], fileName : String) = processor.writeAcademicBackground(list,fileName)
 }
