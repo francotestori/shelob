@@ -21,7 +21,7 @@ object Uploader extends Controller{
       val filename = file.filename
       val contentType = file.contentType.get
       file.ref.moveTo(new File(ShelobConstants.UPLOADER_PATH + filename))
-      Ok(views.html.shelob(filename,"File uploaded"))
+      Redirect(routes.Application.index(filename))
     }.getOrElse {
       Redirect(routes.Uploader.index()).flashing(
         "error" -> "Missing file"

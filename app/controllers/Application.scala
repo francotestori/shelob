@@ -3,6 +3,7 @@ package controllers
 import java.io.File
 
 import generators.ZipGenerator
+import play.Routes
 import play.api.mvc.{Action, Controller}
 import processors.CSVProcessor
 import scrapper.LinkedInWizard
@@ -17,16 +18,16 @@ object Application extends Controller {
   }
 
   /**Populates db and generate zip File with Table CSVs included*/
-  def apply(file : String) = {
+  def apply(file : String) = Action{
     val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
 
     try{
 
-      val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
-
-      LinkedInWizard.run(urls)
-
-      generateCSVs
+//      val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
+//
+//      LinkedInWizard.run(urls)
+//
+//      generateCSVs
 
       createZip(ShelobConstants.SHELOB_ZIP,
         Iterable(
@@ -37,8 +38,11 @@ object Application extends Controller {
           ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
         ))
 
+//      Redirect(routes.Application.downloadZIP())
+
     }
     finally db.close()
+    Redirect(routes.Application.downloadZIP())
   }
 
 
@@ -64,6 +68,17 @@ object Application extends Controller {
   }
 
   /**ZIP Downloader for AJAX request*/
-  def downloadZIP = Action{Ok.sendFile(content = new File(ShelobConstants.SHELOB_ZIP), fileName = _=> ShelobConstants.SHELOB_ZIP)}
+  def downloadZIP() = Action{Ok.sendFile(content = new File(ShelobConstants.SHELOB_ZIP), fileName = _=> ShelobConstants.SHELOB_ZIP)}
+
+  /**Javascript routes*/
+//  def javascriptRoutes = Action { implicit request =>
+//    import routes.javascript
+//    Ok(
+//      Routes.javascriptRouter("jsRoutes")(
+//      Application.apply,
+//      Application.downloadZIP
+//      )
+//    ).as("text/javascript")
+//  }
 
 }
