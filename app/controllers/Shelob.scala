@@ -32,13 +32,13 @@ object Shelob extends Controller {
 
 //                    generateCSVs
 
-                    createZip("C:\\Users\\franco\\shelobDownloads\\shelob.zip",
+                    createZip(ShelobConstants.SHELOB_ZIP,
                       Iterable(
-                        "C:\\Users\\franco\\shelobItems\\personas.csv",
-                        "C:\\Users\\franco\\shelobItems\\negocio.csv",
-                        "C:\\Users\\franco\\shelobItems\\experiencia.csv",
-                        "C:\\Users\\franco\\shelobItems\\academia.csv",
-                        "C:\\Users\\franco\\shelobItems\\historial-academico.csv"
+                        ShelobConstants.ZIPPER_PATH + "personas.csv",
+                        ShelobConstants.ZIPPER_PATH + "negocio.csv",
+                        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
+                        ShelobConstants.ZIPPER_PATH + "academia.csv",
+                        ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
                       ))
 
       Redirect(routes.Shelob.download())
@@ -70,7 +70,7 @@ object Shelob extends Controller {
   }
 
   def download() = Action{
-    Ok.sendFile(content = new File("C:\\Users\\franco\\shelobDownloads\\shelob.zip"), fileName = _ => "shelob.zip")
+    Ok.sendFile(content = new File(ShelobConstants.SHELOB_ZIP), fileName = _ => "shelob.zip")
   }
 
 }
