@@ -11,7 +11,7 @@ import models._
 class CSVProcessor {
 
 
-  def process (file : String): List[String]= {
+  def linkedIn_urls (file : String): List[String]= {
 
     val reader = CSVReader.open(new File(file))
 
@@ -19,6 +19,20 @@ class CSVProcessor {
 
     inputs.map(e => e.get("linkedin_url")).distinct.map(i => i.get)
 
+  }
+
+  def empty_urls (file : String): List[String]= {
+
+    val reader = CSVReader.open(new File(file))
+
+    val inputs: List[Map[String, String]] = reader.allWithHeaders()
+
+    //Gets entries with no linkedin_url TODO get names from list
+    inputs.map{ e =>
+    }
+    inputs.map(e => e.get("linkedin_url")).filter(i => i.get.equals(""))
+
+    null
   }
 
   def writeLinkedInOwners (list : Seq[LinkedInOwner], fileName : String): Unit = {
@@ -72,7 +86,7 @@ object CSVProcessor {
 
   val processor = new CSVProcessor()
 
-  def process (file : String): List[String] = processor.process(file)
+  def process (file : String): List[String] = processor.linkedIn_urls(file)
 
   def writeLO (list: Seq[LinkedInOwner], fileName : String) = processor.writeLinkedInOwners(list, fileName)
 
