@@ -2,7 +2,6 @@ package controllers
 
 import java.io.File
 
-import controllers.Application._
 import play.api.mvc.{Action, Controller}
 import utils.ShelobConstants
 
@@ -21,7 +20,7 @@ object Uploader extends Controller{
       val filename = file.filename
       val contentType = file.contentType.get
       file.ref.moveTo(new File(ShelobConstants.UPLOADER_PATH + filename))
-      Redirect(routes.Application.index(filename))
+      Redirect(routes.Shelob.index(filename))
     }.getOrElse {
       Redirect(routes.Uploader.index()).flashing(
         "error" -> "Missing file"

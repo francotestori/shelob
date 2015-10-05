@@ -174,8 +174,8 @@ object LinkedInWizard {
     wizard.run(urls)
   }
 
-  def getIndex = wizard.getIndex
   def getSize = size
+  def progress = (wizard.getIndex / size) * 100
 
   def getOwnerTable = wizard.getOwnerTable
   def getInstitutionTable = wizard.getInstitutionTable

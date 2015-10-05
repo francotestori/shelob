@@ -5,30 +5,29 @@
 }
 
 @js = {
-    <script src="@routes.Assets.at("javascripts/shelob/upload.js")"></script>
+
 }
 
 @nav(title,css, js){
 
     <div class="row" style="text-align: center">
 
-        <span id="file">
-            <img src="@routes.Assets.at("images/CSV.png")" style="width: 200px">
-            <h1>@file</h1>
-        </span>
+        @helper.form(action = routes.Shelob.shelob(file)){
 
-        <form>
-            <input type="text" id="fileValue" value="@file" hidden>
-        </form>
+            <span id="file">
+                <img src="@routes.Assets.at("images/CSV.png")" style="width: 200px">
+                <input type="text" id="fileValue" value="@file" hidden>
+            </span>
 
-        <button id="shelob" class="btn btn-success btn-file">Proccess</button>
+            <button id="shelob" class="btn btn-success btn-file">Proccess</button>
+
+        }
 
         <br>
         <br>
 
-        <div class="progress">
-            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="">
-
+        <div class="progress" hidden>
+            <div id="progressbar" class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="">
             </div>
         </div>
 
