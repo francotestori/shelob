@@ -1,0 +1,48 @@
+.dropzone-container {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    min-height: 120px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 20px #888888;
+
+}
+
+.upload-box {
+    margin: 2px 2px 2px 2px;
+    padding: 10px 10px 10px 10px;
+    border: 2px dashed rgba(0, 0, 0, 0.20);
+    background-color: #f4f4f4;
+    min-height: 120px;
+}
+
+.dz-message {
+}
+
+.dz-filename {
+    min-height: 80px;
+    background-color: #82BA5A;
+    border-radius: 1px;
+    box-shadow: 0px 0px 10px #006600;
+}
+
+.dz-filename span,
+.dz-message span {
+    display:block;
+    margin: 0 auto;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.dz-filename span {
+    font-size: 15px;
+    font-weight: bolder;
+    color: #fff;
+    top: 50%;
+    padding: 5px 20px 5px 10px;
+}
+
+.dz-size,
+.dz-success-mark,
+.dz-error-mark,
+.dz-error-message {
+    display: none;
+}

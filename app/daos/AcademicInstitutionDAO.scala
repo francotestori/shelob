@@ -13,7 +13,7 @@ import slick.driver.H2Driver.api._
  */
 class AcademicInstitutionDAO (implicit ec: ExecutionContext){
 
-  private val db = Database.forURL("jdbc:h2:file:~/projects/shelob/db/db","sa","")
+  private val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
   private val academicInstitutions = TableQuery[AcademicInstitutions]
 
   def insert( name:String, description:String) : Future[AcademicInstitution] = db.run{
@@ -34,5 +34,7 @@ class AcademicInstitutionDAO (implicit ec: ExecutionContext){
   }
 
   def getAllRows : Future[Seq[AcademicInstitution]] = db.run(academicInstitutions.drop(0).result)
+
+  def emptyTable = db.run(academicInstitutions.filter(_.id in academicInstitutions.sortBy(_.id.asc).map(_.id)).delete)
 
 }

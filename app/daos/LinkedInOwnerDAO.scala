@@ -12,7 +12,7 @@ import slick.driver.H2Driver.api._
  */
 class LinkedInOwnerDAO (implicit ec: ExecutionContext){
 
-  private val db = Database.forURL("jdbc:h2:file:~/projects/shelob/db/db","sa","")
+  private val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
   private val linkedInOwners = TableQuery[LinkedInOwners]
 
   def insert(name:String,location:String,industry:String,website:String) : Future[LinkedInOwner] = db.run{
@@ -33,5 +33,7 @@ class LinkedInOwnerDAO (implicit ec: ExecutionContext){
   }
 
   def getAllRows : Future[Seq[LinkedInOwner]] = db.run(linkedInOwners.drop(0).result)
+
+  def emptyTable = db.run(linkedInOwners.filter(_.id in linkedInOwners.sortBy(_.id.asc).map(_.id)).delete)
 
 }

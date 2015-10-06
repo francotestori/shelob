@@ -12,7 +12,7 @@ import scala.concurrent.{Await, Future, ExecutionContext}
  */
 class BusinessBackgroundDAO (implicit ec: ExecutionContext){
 
-  private val db = Database.forURL("jdbc:h2:file:~/projects/shelob/db/db","sa","")
+  private val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
   private val businessBackgrounds = TableQuery[BusinessBackgrounds]
 
   def insert(role:String,businessInstitution_id:Long,linkedinOwnerId:Long,interval:String,description:String) : Future[BusinessBackground] = db.run{
@@ -33,4 +33,6 @@ class BusinessBackgroundDAO (implicit ec: ExecutionContext){
   }
 
   def getAllRows : Future[Seq[BusinessBackground]] = db.run(businessBackgrounds.drop(0).result)
+
+  def emptyTable = db.run(businessBackgrounds.filter(_.id in businessBackgrounds.sortBy(_.id.asc).map(_.id)).delete)
 }

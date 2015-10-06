@@ -1,43 +1,38 @@
-@(title : String)
+@( file : String, title : String)
 
 @css = {
-    <link rel="stylesheet" href="@routes.Assets.at("dropzone/dropzone.css")">
-    <link rel="stylesheet" href="@routes.Assets.at("dropzone/style.css")">
+
 }
 
 @js = {
-    <script src="@routes.Assets.at("dropzone/dropzone.js")"></script>
+
 }
 
 @nav(title,css, js){
 
-
     <div class="row" style="text-align: center">
 
-        <h1 id="try-it-out">Feed me!</h1>
+        @helper.form(action = routes.Shelob.shelob(file)){
 
-        <div class="container" style="margin-top: 20px">
+            <span id="file">
+                <img src="@routes.Assets.at("images/CSV.png")" style="width: 200px">
+                <h3 style="color : cornflowerblue ;">@file</h3>
+                <input type="text" id="fileValue" value="@file" hidden>
+            </span>
 
-                <span class="dz-message">Click to upload.</span>
+            <button id="shelob" class="btn btn-success btn-file">Proccess</button>
 
-                <div class="row">
-                    <div class="col-lg-6 col-sm-6 col-12">
-                        <div class="input-group" style="margin-left: 100px; margin-right: -500px">
-                            <span class="input-group-btn">
-                                <span class="btn btn-primary btn-file">
-                                    Browse&hellip; <input id="file" type="file" multiple>
-                                </span>
-                            </span>
-                            <input type="text" class="form-control" readonly>
-                        </div>
-                    </div>
-                </div>
+        }
 
-            <br>
+        <br>
+        <br>
 
-            <button class="btn-success" style="align-content: center">Shelob</button>
-
+        <div class="progress" hidden>
+            <div id="progressbar" class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="">
+            </div>
         </div>
 
     </div>
+
+
 }
