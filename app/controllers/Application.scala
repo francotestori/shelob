@@ -54,11 +54,11 @@ object Application extends Controller {
   /**Adds input CSV into a determined path so it can later be analyzed*/
 
   def upload = Action(parse.multipartFormData) { request =>
-    request.body.file("picture").map { picture =>
+    request.body.file("file").map { file =>
       import java.io.File
-      val filename = picture.filename
-      val contentType = picture.contentType
-      picture.ref.moveTo(new File("/tmp/picture"))
+      val filename = file.filename
+      val contentType = file.contentType
+      file.ref.moveTo(new File("~/tmp/" + filename))
       Ok("File uploaded")
     }.getOrElse {
       Redirect(routes.Application.index).flashing(

@@ -1,32 +1,43 @@
 @(title : String)
 
 @css = {
-  <link rel="stylesheet" href="@routes.Assets.at("dropzone/dropzone.css")">
-  <link rel="stylesheet" href="@routes.Assets.at("dropzone/style.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("dropzone/dropzone.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("dropzone/style.css")">
 }
 
 @js = {
-  <script src="@routes.Assets.at("dropzone/dropzone.js")"></script>
+    <script src="@routes.Assets.at("dropzone/dropzone.js")"></script>
 }
 
-  @nav(title,css, js){
+@nav(title,css, js){
 
 
-  <div class="row" style="text-align: center">
+    <div class="row" style="text-align: center">
 
         <h1 id="try-it-out">Feed me!</h1>
 
-        <div id="dropzone">
+        <div class="container" style="margin-top: 20px">
 
-          @helper.form(action = routes.Application.upload,'class -> "dropzone dz-clickable", 'enctype -> "multipart/form-data") {
-            <div class="dz-message">Drop files here or click to upload.</div>
-          }
+                <span class="dz-message">Click to upload.</span>
 
-          <br>
+                <div class="row">
+                    <div class="col-lg-6 col-sm-6 col-12">
+                        <div class="input-group" style="margin-left: 100px; margin-right: -500px">
+                            <span class="input-group-btn">
+                                <span class="btn btn-primary btn-file">
+                                    Browse&hellip; <input id="file" type="file" multiple>
+                                </span>
+                            </span>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+                    </div>
+                </div>
 
-          <button class="btn-primary" style="align-content: center">Shelob</button>
+            <br>
+
+            <button class="btn-success" style="align-content: center">Shelob</button>
 
         </div>
 
-  </div>
+    </div>
 }
