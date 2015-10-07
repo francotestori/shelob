@@ -1,16 +1,25 @@
 /**
- * Created by franco on 1/10/2015.
+ * Created by franco on 28/9/2015.
  */
 
+$(document).on('change', '.btn-file :file', function() {
+    var input = $(this),
+        numFiles = input.get(0).files ? input.get(0).files.length : 1,
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+    input.trigger('fileselect', [numFiles, label]);
+});
 
-$('#shelob').click(function() {
-    $('#errors').hide();
-    $.post($('#fileValue').val())
-    //$.post({
-    //    url: "",
-    //    contentType: "application/json",
-    //    data: JSON.stringify({filename: })
-    //});
+$(document).ready( function() {
+    $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
 
-    return false;
+        var input = $(this).parents('.input-group').find(':text'),
+            log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+        if( input.length ) {
+            input.val(log);
+        } else {
+            if( log ) alert(log);
+        }
+
+    });
 });

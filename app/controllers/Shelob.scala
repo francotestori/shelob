@@ -28,9 +28,9 @@ object Shelob extends Controller {
 
       val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
 
-//   LinkedInWizard.run(urls)
+      LinkedInWizard.run(urls)
 
-//    generateCSVs
+      generateCSVs
 
       createZip(ShelobConstants.SHELOB_ZIP,
         Iterable(
