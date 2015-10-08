@@ -2,6 +2,7 @@ package controllers
 
 import java.io.File
 
+import engine.FunnyCrawler
 import generators.ZipGenerator
 import play.api.mvc.{Action, Controller}
 import processors.CSVProcessor
@@ -26,25 +27,37 @@ object Shelob extends Controller {
 
     try{
 
-      val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
+      val namesNullUrl : List[String] = CSVProcessor.getNullURL(ShelobConstants.UPLOADER_PATH + file)
 
-//      LinkedInWizard.run(urls)
 
-      generateCSVs
+      // HAY QUE USAR TOR !!!!
 
-      createZip(ShelobConstants.SHELOB_ZIP,
-        Iterable(
-          ShelobConstants.ZIPPER_PATH + "personas.csv",
-          ShelobConstants.ZIPPER_PATH + "negocio.csv",
-          ShelobConstants.ZIPPER_PATH + "experiencia.csv",
-          ShelobConstants.ZIPPER_PATH + "academia.csv",
-          ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
-        ))
 
-      TableApocalypse.judgement_day
+      FunnyCrawler.createTextFile("/home/lucas/resultadoCrawler.txt")
+      namesNullUrl.foreach(name => FunnyCrawler.searchLinkedinUrl(name))
+      FunnyCrawler.closeWriter()
 
-      Redirect(routes.Shelob.download())
+      /*
+            val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
 
+            LinkedInWizard.run(urls)
+
+            generateCSVs
+
+            createZip(ShelobConstants.SHELOB_ZIP,
+              Iterable(
+                ShelobConstants.ZIPPER_PATH + "personas.csv",
+                ShelobConstants.ZIPPER_PATH + "negocio.csv",
+                ShelobConstants.ZIPPER_PATH + "experiencia.csv",
+                ShelobConstants.ZIPPER_PATH + "academia.csv",
+                ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
+              ))
+
+            TableApocalypse.judgement_day
+
+            Redirect(routes.Shelob.download())
+      */
+      Ok
     }
 
     finally db.close()
