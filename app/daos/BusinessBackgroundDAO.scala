@@ -34,5 +34,4 @@ class BusinessBackgroundDAO (implicit ec: ExecutionContext){
 
   def getAllRows : Future[Seq[BusinessBackground]] = db.run(businessBackgrounds.drop(0).result)
 
-  def emptyTable = db.run(businessBackgrounds.filter(_.id in businessBackgrounds.sortBy(_.id.asc).map(_.id)).delete)
 }

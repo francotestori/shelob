@@ -35,6 +35,4 @@ class BusinessInstitutionDAO (implicit ec: ExecutionContext){
 
   def getAllRows : Future[Seq[BusinessInstitution]] = db.run(businessInstitutions.drop(0).result)
 
-  def emptyTable = db.run(businessInstitutions.filter(_.id in businessInstitutions.sortBy(_.id.asc).map(_.id)).delete)
-
 }

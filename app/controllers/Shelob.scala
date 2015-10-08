@@ -28,7 +28,7 @@ object Shelob extends Controller {
 
       val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
 
-      LinkedInWizard.run(urls)
+//      LinkedInWizard.run(urls)
 
       generateCSVs
 
@@ -46,6 +46,7 @@ object Shelob extends Controller {
       Redirect(routes.Shelob.download())
 
     }
+
     finally db.close()
 
 

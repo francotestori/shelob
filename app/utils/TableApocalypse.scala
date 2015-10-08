@@ -1,9 +1,9 @@
 package utils
 
-import daos._
-
 import scala.concurrent.{ExecutionContext, Await}
 import scala.concurrent.duration.Duration
+
+import slick.driver.H2Driver.api._
 
 import ExecutionContext.Implicits.global
 
@@ -14,19 +14,16 @@ import ExecutionContext.Implicits.global
  */
 object TableApocalypse {
 
-  /**DAO variables*/
-  private val ownerDAO : LinkedInOwnerDAO = new LinkedInOwnerDAO()
-  private val institutionDAO : BusinessInstitutionDAO = new BusinessInstitutionDAO()
-  private val bBackgroundDAO : BusinessBackgroundDAO = new BusinessBackgroundDAO()
-  private val academyDAO : AcademicInstitutionDAO = new AcademicInstitutionDAO()
-  private val aBackgroundDAO : AcademicBackgroundDAO = new AcademicBackgroundDAO()
+  private val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
 
   def judgement_day = {
-    Await.result(aBackgroundDAO.emptyTable, Duration.Inf)
-    Await.result(bBackgroundDAO.emptyTable, Duration.Inf)
-    Await.result(institutionDAO.emptyTable, Duration.Inf)
-    Await.result(academyDAO.emptyTable, Duration.Inf)
-    Await.result(ownerDAO.emptyTable, Duration.Inf)
+    Await.result(db.run(sqlu"SET REFERENTIAL_INTEGRITY FALSE"), Duration.Inf)
+    Await.result(db.run(sqlu"TRUNCATE TABLE ACADEMIC_BACKGROUND"), Duration.Inf)
+    Await.result(db.run(sqlu"TRUNCATE TABLE BUSINESS_BACKGROUND"), Duration.Inf)
+    Await.result(db.run(sqlu"TRUNCATE TABLE ACADEMIC_INSTITUTION"), Duration.Inf)
+    Await.result(db.run(sqlu"TRUNCATE TABLE BUSINESS_INSTITUTION"), Duration.Inf)
+    Await.result(db.run(sqlu"TRUNCATE TABLE LINKEDIN_OWNER"), Duration.Inf)
+    Await.result(db.run(sqlu"SET REFERENTIAL_INTEGRITY TRUE"), Duration.Inf)
   }
 
 }

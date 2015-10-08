@@ -1,5 +1,6 @@
 package scrapper
 
+import java.net.{SocketTimeoutException, UnknownHostException}
 import java.util.regex.Pattern
 
 import daos._
@@ -64,13 +65,16 @@ class LinkedInWizard {
 
   private def switch(urls : List[String], n : Int) : Boolean ={
     url = urls(n)
+    print(url + "\n")
     //Set TimeOut to 10 seconds
     try{
       document = Jsoup.connect(url).timeout(10*1000).get
       true
     }
     catch {
-      case se : HttpStatusException => switch(urls,n + 1)
+        case se : HttpStatusException => switch(urls,n + 1)
+        case uh : UnknownHostException => switch(urls, n + 1)
+        case st : SocketTimeoutException => switch(urls, n)
     }
   }
   /**LinkedInOwner methods*/
