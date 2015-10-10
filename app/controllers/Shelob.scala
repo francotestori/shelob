@@ -8,7 +8,7 @@ import processors.CSVProcessor
 import scrapper.LinkedInWizard
 
 import slick.driver.H2Driver.api._
-import utils.{TableApocalypse, ShelobConstants}
+import utils.{FileApocalypse, ShelobConstants}
 
 /**
  * Created by franco on 1/10/2015.
@@ -28,20 +28,31 @@ object Shelob extends Controller {
 
       val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
 
-//      LinkedInWizard.run(urls)
+      LinkedInWizard.run(urls)
 
       generateCSVs
 
-      createZip(ShelobConstants.SHELOB_ZIP,
-        Iterable(
-          ShelobConstants.ZIPPER_PATH + "personas.csv",
-          ShelobConstants.ZIPPER_PATH + "negocio.csv",
-          ShelobConstants.ZIPPER_PATH + "experiencia.csv",
-          ShelobConstants.ZIPPER_PATH + "academia.csv",
-          ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
-        ))
+      val files = Iterable(
+        ShelobConstants.ZIPPER_PATH + "personas.csv",
+        ShelobConstants.ZIPPER_PATH + "negocio.csv",
+        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
+        ShelobConstants.ZIPPER_PATH + "academia.csv",
+        ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
+      )
 
-      TableApocalypse.judgement_day
+      createZip(ShelobConstants.SHELOB_ZIP, files)
+
+      val delete = Iterable(
+        ShelobConstants.ZIPPER_PATH + "personas.csv",
+        ShelobConstants.ZIPPER_PATH + "negocio.csv",
+        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
+        ShelobConstants.ZIPPER_PATH + "academia.csv",
+        ShelobConstants.ZIPPER_PATH + "historial-academico.csv",
+        ShelobConstants.UPLOADER_PATH + file
+      )
+
+      FileApocalypse.judgement_day
+      FileApocalypse.file_anihilation(delete)
 
       Redirect(routes.Shelob.download())
 

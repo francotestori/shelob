@@ -1,5 +1,7 @@
 package utils
 
+import java.io.File
+
 import scala.concurrent.{ExecutionContext, Await}
 import scala.concurrent.duration.Duration
 
@@ -12,7 +14,7 @@ import ExecutionContext.Implicits.global
  *
  * Created by franco on 5/10/2015.
  */
-object TableApocalypse {
+object FileApocalypse {
 
   private val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
 
@@ -24,6 +26,16 @@ object TableApocalypse {
     Await.result(db.run(sqlu"TRUNCATE TABLE BUSINESS_INSTITUTION"), Duration.Inf)
     Await.result(db.run(sqlu"TRUNCATE TABLE LINKEDIN_OWNER"), Duration.Inf)
     Await.result(db.run(sqlu"SET REFERENTIAL_INTEGRITY TRUE"), Duration.Inf)
+  }
+
+  def file_anihilation(includes : Iterable[String]) = {
+    includes.map(path => new File(path)).map{file =>
+      try{
+        file.delete()
+      } catch{
+        case e : Exception => e.printStackTrace()
+      }
+    }
   }
 
 }

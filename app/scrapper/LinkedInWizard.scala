@@ -65,7 +65,6 @@ class LinkedInWizard {
 
   private def switch(urls : List[String], n : Int) : Boolean ={
     url = urls(n)
-    print(url + "\n")
     //Set TimeOut to 10 seconds
     try{
       document = Jsoup.connect(url).timeout(10*1000).get
