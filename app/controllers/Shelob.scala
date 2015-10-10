@@ -2,6 +2,7 @@ package controllers
 
 import java.io.File
 
+import engine.FunnyCrawler
 import generators.ZipGenerator
 import play.api.mvc.{Action, Controller}
 import processors.CSVProcessor
@@ -27,7 +28,8 @@ object Shelob extends Controller {
     try{
 
       val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
-
+      val namesNullUrl : List[String] = CSVProcessor.getNullURL(ShelobConstants.UPLOADER_PATH + file)
+      
       LinkedInWizard.run(urls)
 
       generateCSVs
@@ -40,19 +42,11 @@ object Shelob extends Controller {
         ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
       )
 
-      createZip(ShelobConstants.SHELOB_ZIP, files)
+      FunnyCrawler.createTextFile("/home/lucas/resultadoCrawler.txt")
+      namesNullUrl.foreach(name => FunnyCrawler.searchLinkedinUrl(name))
+      FunnyCrawler.closeWriter()
 
-      val delete = Iterable(
-        ShelobConstants.ZIPPER_PATH + "personas.csv",
-        ShelobConstants.ZIPPER_PATH + "negocio.csv",
-        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
-        ShelobConstants.ZIPPER_PATH + "academia.csv",
-        ShelobConstants.ZIPPER_PATH + "historial-academico.csv",
-        ShelobConstants.UPLOADER_PATH + file
-      )
-
-      FileApocalypse.judgement_day
-      FileApocalypse.file_anihilation(delete)
+      TableApocalypse.judgement_day
 
       Redirect(routes.Shelob.download())
 
