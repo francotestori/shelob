@@ -2,6 +2,9 @@ package utils
 
 import java.io.File
 
+import play.api.Play.current
+import play.api.Play
+
 import scala.concurrent.{ExecutionContext, Await}
 import scala.concurrent.duration.Duration
 
@@ -16,7 +19,7 @@ import ExecutionContext.Implicits.global
  */
 object FileApocalypse {
 
-  private val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
+  private val db = Database.forURL(Play.application.configuration.getString("db.default.url").get,"sa","")
 
   def judgement_day = {
     Await.result(db.run(sqlu"SET REFERENTIAL_INTEGRITY FALSE"), Duration.Inf)
