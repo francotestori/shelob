@@ -11,6 +11,9 @@ import scrapper.LinkedInWizard
 import slick.driver.H2Driver.api._
 import utils.{FileApocalypse, ShelobConstants}
 
+import play.api.Play.current
+import play.api.Play
+
 /**
  * Created by franco on 1/10/2015.
  */
@@ -23,7 +26,7 @@ object Shelob extends Controller {
   /**Populates db and generate zip File with Table CSVs included*/
   def shelob(file : String) = Action{ implicit request =>
 
-    val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
+    val db = Database.forURL(Play.application.configuration.getString("db.default.url").get,"sa","")
 
     try{
 
@@ -64,9 +67,6 @@ object Shelob extends Controller {
       Redirect(routes.Shelob.download())
 
     }
-      catch{
-        case e : Exception => Ok(e.printStackTrace())
-      }
 
     finally db.close()
 
