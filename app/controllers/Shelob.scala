@@ -2,13 +2,17 @@ package controllers
 
 import java.io.File
 
+import engine.FunnyCrawler
 import generators.ZipGenerator
 import play.api.mvc.{Action, Controller}
 import processors.CSVProcessor
 import scrapper.LinkedInWizard
 
 import slick.driver.H2Driver.api._
-import utils.{TableApocalypse, ShelobConstants}
+import utils.{FileApocalypse, ShelobConstants}
+
+import play.api.Play.current
+import play.api.Play
 
 /**
  * Created by franco on 1/10/2015.
@@ -22,9 +26,15 @@ object Shelob extends Controller {
   /**Populates db and generate zip File with Table CSVs included*/
   def shelob(file : String) = Action{ implicit request =>
 
-    val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
+    val db = Database.forURL(Play.application.configuration.getString("db.default.url").get,"sa","")
 
     try{
+
+//      val namesNullUrl : List[String] = CSVProcessor.getNullURL(ShelobConstants.UPLOADER_PATH + file)
+//
+//      FunnyCrawler.createTextFile("/home/lucas/resultadoCrawler.txt")
+//      namesNullUrl.foreach(name => FunnyCrawler.searchLinkedinUrl(name))
+//      FunnyCrawler.closeWriter()
 
       val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
 
@@ -32,20 +42,32 @@ object Shelob extends Controller {
 
       generateCSVs
 
-      createZip(ShelobConstants.SHELOB_ZIP,
-        Iterable(
-          ShelobConstants.ZIPPER_PATH + "personas.csv",
-          ShelobConstants.ZIPPER_PATH + "negocio.csv",
-          ShelobConstants.ZIPPER_PATH + "experiencia.csv",
-          ShelobConstants.ZIPPER_PATH + "academia.csv",
-          ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
-        ))
+      val files = Iterable(
+        ShelobConstants.ZIPPER_PATH + "personas.csv",
+        ShelobConstants.ZIPPER_PATH + "negocio.csv",
+        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
+        ShelobConstants.ZIPPER_PATH + "academia.csv",
+        ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
+      )
 
-      TableApocalypse.judgement_day
+      createZip(ShelobConstants.SHELOB_ZIP, files)
+
+      val delete = Iterable(
+        ShelobConstants.ZIPPER_PATH + "personas.csv",
+        ShelobConstants.ZIPPER_PATH + "negocio.csv",
+        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
+        ShelobConstants.ZIPPER_PATH + "academia.csv",
+        ShelobConstants.ZIPPER_PATH + "historial-academico.csv",
+        ShelobConstants.UPLOADER_PATH + file
+      )
+
+      FileApocalypse.judgement_day
+      FileApocalypse.file_anihilation(delete)
 
       Redirect(routes.Shelob.download())
 
     }
+
     finally db.close()
 
 

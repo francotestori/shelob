@@ -1,24 +1,5 @@
 # --- !Ups
 
--- create table TEST(
--- id                          bigint not null,
--- name                        varchar(255),
--- bio                         varchar(400),
--- role                        varchar(255),
--- follower_count              bigint,
--- angelList_url               varchar(255),
--- image                       varchar(255),
--- blog_url                    varchar(255),
--- bio_url                     varchar(255),
--- twitter_url                 varchar(255),
--- facebook_url                varchar(255),
--- linkedIn_url                varchar(255),
--- what_ive_built              varchar(1000),
--- what_i_do                   varchar(1000),
--- investor                    boolean,
--- )
--- AS SELECT * FROM CSVREAD('C:\users-argentina.csv');
-
 create table LINKEDIN_OWNER(
 id                          bigint auto_increment not null,
 -- tangela_owner_id            bigint not null,
@@ -88,3 +69,15 @@ alter table ACADEMIC_BACKGROUND add constraint fk_a_linkedin_owner_id foreign ke
 alter table ACADEMIC_BACKGROUND add constraint fk_academic_insitution_id foreign key (academic_institution_id) references ACADEMIC_INSTITUTION(id) on delete restrict on update restrict;
 
 # --- !Downs
+
+SET REFERENTIAL_INTEGRITY FALSE;
+
+drop table if exists LINKEDIN_OWNER;
+
+drop table if exists BUSINESS_INSTITUTION;
+
+drop table if exists ACADEMIC_INSTITUTION;
+
+drop table if exists BUSINESS_BACKGROUND;
+
+drop table if exists ACADEMIC_BACKGROUND;
