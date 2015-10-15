@@ -22,11 +22,11 @@ object TableApocalypse {
   private val aBackgroundDAO : AcademicBackgroundDAO = new AcademicBackgroundDAO()
 
   def judgement_day = {
-    Await.result(ownerDAO.emptyTable, Duration.Inf)
-    Await.result(institutionDAO.emptyTable, Duration.Inf)
     Await.result(bBackgroundDAO.emptyTable, Duration.Inf)
-    Await.result(academyDAO.emptyTable, Duration.Inf)
     Await.result(aBackgroundDAO.emptyTable, Duration.Inf)
+    Await.result(institutionDAO.emptyTable, Duration.Inf)
+    Await.result(academyDAO.emptyTable, Duration.Inf)
+    Await.result(ownerDAO.emptyTable, Duration.Inf)
   }
 
 }
