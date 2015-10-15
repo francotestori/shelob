@@ -64,6 +64,9 @@ object Shelob extends Controller {
       Redirect(routes.Shelob.download())
 
     }
+      catch{
+        case e : Exception => Ok(e.printStackTrace())
+      }
 
     finally db.close()
 
