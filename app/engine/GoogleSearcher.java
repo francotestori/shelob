@@ -18,7 +18,7 @@ import org.jsoup.select.Elements;
 /**
  * Created by lucas on 05/10/15.
  */
-public class FunnyCrawler {
+public class GoogleSearcher {
 
     private static PrintWriter writer;
 
@@ -38,21 +38,31 @@ public class FunnyCrawler {
                 searcher = searcher + "%20" + nameSplit[i];
                 i++;
             }
-            Set<String> result = getDataFromGoogle(searcher);
+            Set<String> result = getDataFromGoogle(nameSplit, searcher);
 
-            writer.println("ANALIZANDO USUARIO URL VACIO: ");
-            writer.println(searchName);
-            for(String temp : result){
-                writer.println(temp);
-            }
-            writer.println(result.size());
-            writer.println("");
+//            writer.println("ANALIZANDO USUARIO URL VACIO: ");
+//            writer.println(searchName);
+
+            System.out.println("ANALIZANDO USUARIO URL VACIO: ");
+            System.out.println(searchName);
+            result.forEach(System.out::println);
+
+            System.out.println(result.size());
+
+//            result.forEach(writer::println);
+//            writer.println(result.size());
+//            writer.println("");
         }
     }
 
-    public static void closeWriter() { writer.close(); }
+    public static void closeWriter() {
+        writer.close();
+        System.getProperties().put("proxySet", "false");
+        System.getProperties().put("proxyHost", "");
+        System.getProperties().put("proxyPort", "");
+    }
 
-    public static String getDomainName(String url){
+    public static String getDomainName(String[] name, String url){
 
         String domainName = "";
         String[] domainNameSplitByAmper;
@@ -64,26 +74,38 @@ public class FunnyCrawler {
             //Borro los caracteres '/url?q='
             domainName = url.substring(7);
 
-            //Limpio los parámetros pasados por url
-            if (domainName.contains("&")) {
-                domainNameSplitByAmper = domainName.split("&");
-                domainName = domainNameSplitByAmper[0];
+            boolean nameInURL = false;
+            for (String aName : name) {
+                if (domainName.contains(aName.toLowerCase())) {
+                    nameInURL = true;
+                }
             }
-            if (domainName.contains("%")) {
-                domainNameSplitByPerc = domainName.split("%");
-                domainName = domainNameSplitByPerc[0];
+
+            if (nameInURL) {
+                //Limpio los parámetros pasados por url
+                if (domainName.contains("&")) {
+                    domainNameSplitByAmper = domainName.split("&");
+                    domainName = domainNameSplitByAmper[0];
+                }
+            }
+            else {
+                domainName = "";
             }
         }
 
         return domainName;
     }
 
-    public static Set<String> getDataFromGoogle(String query) {
+    public static Set<String> getDataFromGoogle(String[] name, String query) {
 
         Set<String> result = new HashSet<String>();
         String request = "https://www.google.com.ar/search?q=" + query + "&num=10";
 
         try {
+
+            System.setProperty("socksProxyHost", "localhost");
+            System.setProperty("socksProxyPort", "9050");
+
             // need http protocol, set this as a Google bot agent :)
             Document doc = Jsoup
                     .connect(request)
@@ -98,7 +120,7 @@ public class FunnyCrawler {
                 String temp = link.attr("href");
                 if(temp.startsWith("/url?q=")){
                     //use regex to get domain name
-                    temp = getDomainName(temp);
+                    temp = getDomainName(name, temp);
                     if (temp != null && !temp.equals(""))
                         result.add(temp);
                 }
