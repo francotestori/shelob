@@ -30,15 +30,9 @@ object Shelob extends Controller {
 
     try{
 
-//      val namesNullUrl : List[String] = CSVProcessor.getNullURL(ShelobConstants.UPLOADER_PATH + file)
-//
-//      FunnyCrawler.createTextFile("/home/lucas/resultadoCrawler.txt")
-//      namesNullUrl.foreach(name => FunnyCrawler.searchLinkedinUrl(name))
-//      FunnyCrawler.closeWriter()
+      val urls : List[(String,String)] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
 
-      val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
-
-      LinkedInWizard.run(urls)
+      LinkedInWizard.run(urls,false)
 
       generateCSVs
 
@@ -61,7 +55,8 @@ object Shelob extends Controller {
         ShelobConstants.UPLOADER_PATH + file
       )
 
-      FileApocalypse.judgement_day
+//      FileApocalypse.judgement_day
+//      FileApocalypse.restartIdentities
       FileApocalypse.file_anihilation(delete)
 
       Redirect(routes.Shelob.download())

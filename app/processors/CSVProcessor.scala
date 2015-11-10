@@ -10,14 +10,14 @@ import models._
  */
 class CSVProcessor {
 
-
-  def linkedIn_urls (file : String): List[String]= {
+  /** Devuelve una lista con la tupla (linkedin_url,tangela_id) */
+  def linkedIn_urls (file : String): List[(String,String)]= {
 
     val reader = CSVReader.open(new File(file))
 
     val inputs: List[Map[String, String]] = reader.allWithHeaders()
 
-    inputs.map(e => e.get("linkedin_url")).distinct.map(i => i.get)
+    (inputs.map(e => e.get("linkedin_url").get) zip inputs.map(i => i.get("id").get)).distinct.filter(! _._1.isEmpty)
 
   }
 
@@ -35,8 +35,8 @@ class CSVProcessor {
   def writeLinkedInOwners (list : Seq[LinkedInOwner], fileName : String): Unit = {
     val writer = CSVWriter.open(fileName, append = true)
 
-    writer.writeRow(List("Id", "Name", "Location", "Industry", "Website"))
-    list.foreach(elem => writer.writeRow(List(elem.id.get, elem.name, elem.location, elem.industry, elem.website)))
+    writer.writeRow(List("Id", "Name", "Location", "Industry", "Website","TangelaId","Searched","State"))
+    list.foreach(elem => writer.writeRow(List(elem.id.get, elem.name, elem.location, elem.industry, elem.website,elem.tangelaId,elem.searched,elem.state)))
 
     writer.close()
   }
@@ -83,7 +83,7 @@ object CSVProcessor {
 
   val processor = new CSVProcessor()
 
-  def process (file : String): List[String] = processor.linkedIn_urls(file)
+  def process (file : String): List[(String,String)] = processor.linkedIn_urls(file)
 
   def getNullURL (file: String): List[String] = processor.empty_urls(file)
 

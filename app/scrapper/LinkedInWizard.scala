@@ -32,20 +32,29 @@ class LinkedInWizard {
   private val academyDAO : AcademicInstitutionDAO = new AcademicInstitutionDAO()
   private val aBackgroundDAO : AcademicBackgroundDAO = new AcademicBackgroundDAO()
 
+  /**Constantes de estado {OK - CONNECTION ERROR - VALIDATION ERROR - URL ERROR}*/
+  private val ok =  Await.result(new OwnerStateDAO().selectByDescription("Scrap OK"), Duration.Inf).get
+  private val urlError =  Await.result(new OwnerStateDAO().selectByDescription("Scrap URL ERROR"),Duration.Inf).get
+  private val validationError =  Await.result(new OwnerStateDAO().selectByDescription("Scrap VALIDATION ERROR"),Duration.Inf).get
+  private val connectionError =  Await.result(new OwnerStateDAO().selectByDescription("Scrap CONNECTION ERROR"),Duration.Inf).get
 
-  def run(urls : List[String]) = {
-    if(!urls.isEmpty) {
+  /** Metodo que se encarga de ejecutar el scrap de la Lista(url,tangelaId) */
+  def run(urls : List[(String,String)], searched : Boolean) = {
+    if(urls.nonEmpty) {
 
       for (i <- 0 to urls.length - 1) {
 
-        if(LinkedInValidator.validateUrl(urls(i))) {
+        val pages = urls.map(e => e._1)
+        val ids = urls.map(i => i._2)
 
-          switch(urls,i)
+        if(LinkedInValidator.validateUrl(pages(i))) {
+
+          switch(pages, i)
 
           index = i
 
-          if(LinkedInValidator.validateOwner(getOwnerName,getOwnerLocation,getOwnerIndustry)) {
-            val owner: Long = insertOwner.id.get
+          if (!getOwnerName.isEmpty) {
+            val owner: Long = insertOwner(ids(i), searched, ok.id.get).id.get
             insertBusinessInfo(owner)
             insertAcademicInfo(owner)
           }
@@ -54,22 +63,14 @@ class LinkedInWizard {
 
     }
   }
-  
-  def getOwnerTable = Await.result(ownerDAO.getAllRows, Duration.Inf)
-  def getInstitutionTable = Await.result(institutionDAO.getAllRows, Duration.Inf)
-  def getBBTable = Await.result(bBackgroundDAO.getAllRows, Duration.Inf)
-  def getAcademyTable = Await.result(academyDAO.getAllRows, Duration.Inf)
-  def getABTable = Await.result(aBackgroundDAO.getAllRows, Duration.Inf)
-
-  def getIndex = index
 
   private def switch(urls : List[String], n : Int) : Boolean ={
     url = urls(n)
-    //Set TimeOut to 10 seconds
-    try{
+
+    try
       document = Jsoup.connect(url).timeout(10*1000).get
       true
-    }
+
     catch {
         case se : HttpStatusException => switch(urls,n + 1)
         case uh : UnknownHostException => switch(urls, n + 1)
@@ -77,38 +78,43 @@ class LinkedInWizard {
     }
   }
   /**LinkedInOwner methods*/
-  private def insertOwner: LinkedInOwner = {
-    Await.result(ownerDAO.insertIfNotExists(getOwnerName, getOwnerLocation, getOwnerIndustry, url), Duration.Inf)
+  private def insertOwner(tangelaId : String, searched : Boolean, state : Long): LinkedInOwner = {
+      Await.result(ownerDAO.insertIfNotExists(getOwnerName, getOwnerLocation, getOwnerIndustry, url,tangelaId, searched,state), Duration.Inf)
   }
 
   private def getOwnerName : String = {
-    try{
+    try
       document.select(".full-name").get(0).text()
+    catch{
+      case iob: IndexOutOfBoundsException => getOwnerName2
     }
+  }
+
+  private def getOwnerName2 : String = {
+    try
+      document.select("#name").get(0).text()
     catch {
       case iob: IndexOutOfBoundsException => ""
     }
   }
-  private def getOwnerLocation : String = {
 
-    try{
+  private def getOwnerLocation : String = {
+    try
       document.select(".locality").get(0).text()
-    }
     catch {
       case iob: IndexOutOfBoundsException => ""
     }
   }
 
   private def getOwnerIndustry : String = {
-    try{
+    try
       document.select(".industry").get(0).text()
-    }
     catch {
       case iob: IndexOutOfBoundsException => ""
     }
   }
 
-  /**Business Institution & Background methods*/
+  /**Business Institution&Background methods*/
   private def insertBusinessInfo(owner : Long) = {
     val businessInfo : Elements = getExperiences
 
@@ -136,7 +142,7 @@ class LinkedInWizard {
     bBackgroundDAO.insertIfNotExists(role, business, owner, interval, info)
   }
 
-  /**Academic Institution & Background methods*/
+  /**Academic Institution&Background methods*/
   private def insertAcademicInfo(owner : Long) = {
     val academicInfo : Elements = getAcademics
 
@@ -164,6 +170,14 @@ class LinkedInWizard {
     aBackgroundDAO.insertIfNotExists(title, academy, owner, interval, "")
   }
 
+  def getOwnerTable = Await.result(ownerDAO.getAllRows, Duration.Inf)
+  def getInstitutionTable = Await.result(institutionDAO.getAllRows, Duration.Inf)
+  def getBBTable = Await.result(bBackgroundDAO.getAllRows, Duration.Inf)
+  def getAcademyTable = Await.result(academyDAO.getAllRows, Duration.Inf)
+  def getABTable = Await.result(aBackgroundDAO.getAllRows, Duration.Inf)
+
+  def getIndex = index
+
 }
 
 object LinkedInWizard {
@@ -171,9 +185,9 @@ object LinkedInWizard {
   val wizard  = new LinkedInWizard()
   var size : Long = 0
 
-  def run(urls : List[String]) = {
+  def run(urls : List[(String,String)], searched : Boolean) = {
     size = urls.size
-    wizard.run(urls)
+    wizard.run(urls,searched)
   }
 
   def getSize = size

@@ -2,11 +2,13 @@
 
 create table LINKEDIN_OWNER(
 id                          bigint auto_increment not null,
--- tangela_owner_id            bigint not null,
 name                        varchar(255),
 location                    varchar(800),
 industry                    varchar(255),
 website                     varchar(255) not null unique,
+tangela_id                  varchar(255),
+searched                    boolean,
+owner_state_id              bigint not null,
 constraint pk_linkedin_owner primary key (id)
 );
 
@@ -46,7 +48,11 @@ description                 varchar(600),
 constraint pk_academic_background primary key (id)
 );
 
-create sequence tangela_owner_seq;
+create table OWNER_STATE(
+id                          bigint auto_increment  not null,
+description                 varchar(255),
+constraint pk_owner_state primary key (id)
+);
 
 create sequence linkedin_owner_seq;
 
@@ -58,7 +64,14 @@ create sequence academic_institution_seq;
 
 create sequence academic_background_seq;
 
--- alter table LINKEDIN_OWNER add constraint fk_tangela_owner_id foreign key (tangela_owner_id) references TANGELA_OWNER(id) on delete restrict on update restrict;
+create sequence owner_state_seq;
+
+insert into OWNER_STATE VALUES (1,'Scrap OK');
+insert into OWNER_STATE VALUES (2,'Scrap CONNECTION ERROR');
+insert into OWNER_STATE VALUES (3,'Scrap VALIDATION ERROR');
+insert into OWNER_STATE VALUES (4,'Scrap URL ERROR');
+
+alter table LINKEDIN_OWNER add constraint fk_owner_state_id foreign key (owner_state_id) references OWNER_STATE(id) on delete restrict on update restrict;
 
 alter table BUSINESS_BACKGROUND add constraint fk_b_linkedin_owner_id foreign key (linkedin_owner_id) references LINKEDIN_OWNER(id) on delete restrict on update restrict;
 
@@ -81,3 +94,5 @@ drop table if exists ACADEMIC_INSTITUTION;
 drop table if exists BUSINESS_BACKGROUND;
 
 drop table if exists ACADEMIC_BACKGROUND;
+
+drop table if exists OWNER_STATE;

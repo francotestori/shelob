@@ -19,7 +19,7 @@ object LinkedInValidator {
     !academy.isEmpty && !title.isEmpty && !interval.isEmpty
   }
 
-  def validateOwner(name : String, location : String, industry : String) : Boolean = {
-    !name.isEmpty && !location.isEmpty && !industry.isEmpty
+  def validateOwner(name : String, location : String) : Boolean = {
+    !name.isEmpty && !location.isEmpty
   }
 }

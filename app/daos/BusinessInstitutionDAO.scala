@@ -1,6 +1,8 @@
 package daos
 
 import models.{BusinessInstitutions, BusinessInstitution}
+import play.api.Play
+import play.api.Play.current
 import slick.lifted.TableQuery
 
 import scala.concurrent.duration.Duration
@@ -13,7 +15,7 @@ import slick.driver.H2Driver.api._
  */
 class BusinessInstitutionDAO (implicit ec: ExecutionContext){
 
-  private val db = Database.forURL("jdbc:h2:file:~/projects/uploader/db/db","sa","")
+  private val db = Database.forURL(Play.application.configuration.getString("db.default.url").get,"sa","")
   private val businessInstitutions = TableQuery[BusinessInstitutions]
 
   def insert(name:String, description:String,sector:String, location:String) : Future[BusinessInstitution] = db.run{
