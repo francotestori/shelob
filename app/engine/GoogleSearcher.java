@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -25,48 +27,79 @@ public class GoogleSearcher {
 
     public static void createTextFile(String fileName) throws FileNotFoundException {
         writer = new PrintWriter(fileName);
+        writer.println("ANALIZANDO USUARIO URL VACIO: ");
     }
     public static void searchLinkedinUrl(String searchName) throws UnsupportedEncodingException, InterruptedException {
 
         if (searchName != null) {
 
             String[] nameSplit = searchName.split(" ");
-            String searcher = "linkedin";
+            String searcher = "linkedIn";
 
             int i = 0;
             while (i != nameSplit.length) {
                 searcher = searcher + "%20" + nameSplit[i];
                 i++;
             }
-            Set<String> result = getDataFromGoogle(nameSplit, searcher);
+            ArrayList<String> result = getDataFromGoogle(nameSplit, searcher);
 
-//            writer.println("ANALIZANDO USUARIO URL VACIO: ");
-//            writer.println(searchName);
+            String finalURL = selectCorrectURL(nameSplit, result);
 
-            System.out.println("ANALIZANDO USUARIO URL VACIO: ");
-            System.out.println(searchName);
-            result.forEach(System.out::println);
+//            for (String a : result) {
+//                writer.println(searchName + " - " + a);
+//            }
 
-            System.out.println(result.size());
-
-//            result.forEach(writer::println);
-//            writer.println(result.size());
-//            writer.println("");
+            writer.println(searchName + " - " + finalURL);
         }
     }
 
     public static void closeWriter() {
         writer.close();
-        System.getProperties().put("proxySet", "false");
-        System.getProperties().put("proxyHost", "");
-        System.getProperties().put("proxyPort", "");
+//        System.getProperties().put("proxyHost", "");
+//        System.getProperties().put("proxyPort", "");
+    }
+
+    public static String selectCorrectURL(String[] userName, ArrayList<String> manyURLs) {
+        String url = "";
+        ArrayList<String> possibleAnswers = new ArrayList<>();
+
+        if (!manyURLs.isEmpty() || !manyURLs.get(manyURLs.size() - 1).contains(String.join("", userName).toLowerCase())) {
+            return manyURLs.get(manyURLs.size() - 1);
+        }
+        else {
+            for (String anURL : manyURLs) {
+                if (anURL.substring(8).startsWith("www.linkedin.com")
+                        || anURL.substring(11).startsWith("linkedin.com")) {
+                    if (anURL.contains(String.join("", userName).toLowerCase())) {
+                        url = anURL;
+                    }
+                    else if (anURL.contains(String.join("-", userName).toLowerCase())) {
+                        url = anURL;
+                    }
+                    else{
+                        int i = 0;
+                        while (i != userName.length) {
+                            if (anURL.contains(userName[i].toLowerCase())) {
+                                possibleAnswers.add(anURL);
+                                break;
+                            }
+                            i++;
+                        }
+                    }
+                }
+            }
+            if (!possibleAnswers.isEmpty()) {
+                System.out.println(possibleAnswers.get(0) + " - NOSE QUE ONDA!! " + String.join(" ", userName));
+            }
+        }
+
+        return url;
     }
 
     public static String getDomainName(String[] name, String url){
 
         String domainName = "";
         String[] domainNameSplitByAmper;
-        String[] domainNameSplitByPerc;
 
         //Elimino las url que tengan busqueda de usuarios
         if (!url.contains("pub/dir/")) {
@@ -96,15 +129,15 @@ public class GoogleSearcher {
         return domainName;
     }
 
-    public static Set<String> getDataFromGoogle(String[] name, String query) {
+    public static ArrayList<String> getDataFromGoogle(String[] name, String query) {
 
-        Set<String> result = new HashSet<String>();
+        ArrayList<String> result = new ArrayList<>();
         String request = "https://www.google.com.ar/search?q=" + query + "&num=10";
 
         try {
 
-            System.setProperty("socksProxyHost", "localhost");
-            System.setProperty("socksProxyPort", "9050");
+//            System.setProperty("socksProxyHost", "localhost");
+//            System.setProperty("socksProxyPort", "9050");
 
             // need http protocol, set this as a Google bot agent :)
             Document doc = Jsoup

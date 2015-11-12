@@ -19,7 +19,7 @@ object Uploader extends Controller{
     request.body.file("fileUpload").map { file =>
       val filename = file.filename
       val contentType = file.contentType.get
-      file.ref.moveTo(new File("/home/franco/shelobUploads/" + filename))
+      file.ref.moveTo(new File(ShelobConstants.UPLOADER_PATH + filename))
       Redirect(routes.Shelob.index(filename))
     }.getOrElse {
       Redirect(routes.Uploader.index()).flashing(
