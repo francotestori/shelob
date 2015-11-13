@@ -55,45 +55,87 @@ public class GoogleSearcher {
 
     public static void closeWriter() {
         writer.close();
-//        System.getProperties().put("proxyHost", "");
-//        System.getProperties().put("proxyPort", "");
+        System.getProperties().put("proxyHost", "");
+        System.getProperties().put("proxyPort", "");
     }
 
     public static String selectCorrectURL(String[] userName, ArrayList<String> manyURLs) {
         String url = "";
         ArrayList<String> possibleAnswers = new ArrayList<>();
 
-        if (!manyURLs.isEmpty() || !manyURLs.get(manyURLs.size() - 1).contains(String.join("", userName).toLowerCase())) {
-            return manyURLs.get(manyURLs.size() - 1);
-        }
-        else {
-            for (String anURL : manyURLs) {
-                if (anURL.substring(8).startsWith("www.linkedin.com")
-                        || anURL.substring(11).startsWith("linkedin.com")) {
-                    if (anURL.contains(String.join("", userName).toLowerCase())) {
-                        url = anURL;
-                    }
-                    else if (anURL.contains(String.join("-", userName).toLowerCase())) {
-                        url = anURL;
-                    }
-                    else{
-                        int i = 0;
-                        while (i != userName.length) {
-                            if (anURL.contains(userName[i].toLowerCase())) {
-                                possibleAnswers.add(anURL);
-                                break;
+        if (!manyURLs.isEmpty()) {
+            if (isCorrect(userName, manyURLs.get(0)))
+                url = manyURLs.get(0);
+            else {
+                for (String anURL : manyURLs) {
+                    if (anURL.substring(8).startsWith("www.linkedin.com")
+                            || anURL.substring(11).startsWith("linkedin.com")) {
+                        String[] splitURL = anURL.split("/");
+                        String nameOnURL = splitURL[4];
+                        if (nameOnURL.equalsIgnoreCase(String.join("", userName))) {
+                            url = anURL;
+                            break;
+                        } else if (nameOnURL.equalsIgnoreCase(String.join("-", userName))) {
+                            url = anURL;
+                            break;
+                        } else {
+                            int i = 0;
+                            while (i != userName.length) {
+                                if (nameOnURL.contains(userName[i].toLowerCase())) {
+                                    possibleAnswers.add(anURL);
+                                }
+                                i++;
                             }
-                            i++;
                         }
                     }
                 }
             }
-            if (!possibleAnswers.isEmpty()) {
-                System.out.println(possibleAnswers.get(0) + " - NOSE QUE ONDA!! " + String.join(" ", userName));
+        }
+        if (!possibleAnswers.isEmpty()) {
+            System.out.println(String.join(" ", userName));
+            for (String answer : possibleAnswers) {
+                System.out.println(answer);
             }
         }
 
         return url;
+    }
+
+    private static boolean isCorrect(String[] userName, String domain) {
+        boolean isCorrect = false;
+        String[] splitURL = domain.split("/");
+        String nameOnURL = splitURL[4];
+
+        if (domain.substring(8).startsWith("www.linkedin.com") || domain.substring(11).startsWith("linkedin.com")) {
+            if (nameOnURL.equalsIgnoreCase(String.join("", userName))) {
+                isCorrect = true;
+            } else if (nameOnURL.equalsIgnoreCase(String.join("-", userName))) {
+                isCorrect = true;
+            } else {
+                int i = 0;
+                while (i != userName.length) {
+                    if (nameOnURL.contains(userName[i].toLowerCase())) {
+
+                        //ACA MIRO SI EN VEZ DEL NOMBRE ENTERO ESTA SOLO UNA PARTE...
+                        //MIRO EL APELLIDO Y LA PRIMER LETRA DEL NOMBRE
+                        if (i != 0 && nameOnURL.contains("" + userName[i - 1].toLowerCase().charAt(0)))
+                            isCorrect = true;
+                        //MIRO EL NOMBRE Y LA PRIMER LETRA DEL APELLIDO
+                        else if (i != (userName.length - 1) && nameOnURL.contains("" + userName[i + 1].toLowerCase().charAt(0)))
+                            isCorrect = true;
+
+                        //FALTA PULIR ESTO
+                        if (isCorrect && (nameOnURL.length() > (userName[i].length() + userName.length - 1)))
+                            isCorrect = false;
+                        //FALTA ACLARAR QUE NO HAYA OTRO NOMBRE O APELLIDO MAS, SOLO LETRAS
+                        //TENGO QUE CHEQUEAR QUE HAYA LAS ELTRAS DEL RESTO, PUEDE FALTAR LETRAS, PERO NO PUEDEN SOBRAR
+                        //TANTO MAS QUE LO QUE YA TENGO
+                    }
+                    i++;
+                }
+            }
+        }
+        return isCorrect;
     }
 
     public static String getDomainName(String[] name, String url){
@@ -107,22 +149,10 @@ public class GoogleSearcher {
             //Borro los caracteres '/url?q='
             domainName = url.substring(7);
 
-            boolean nameInURL = false;
-            for (String aName : name) {
-                if (domainName.contains(aName.toLowerCase())) {
-                    nameInURL = true;
-                }
-            }
-
-            if (nameInURL) {
-                //Limpio los parámetros pasados por url
-                if (domainName.contains("&")) {
-                    domainNameSplitByAmper = domainName.split("&");
-                    domainName = domainNameSplitByAmper[0];
-                }
-            }
-            else {
-                domainName = "";
+            //Limpio los parámetros pasados por url
+            if (domainName.contains("&")) {
+                domainNameSplitByAmper = domainName.split("&");
+                domainName = domainNameSplitByAmper[0];
             }
         }
 
@@ -136,8 +166,8 @@ public class GoogleSearcher {
 
         try {
 
-//            System.setProperty("socksProxyHost", "localhost");
-//            System.setProperty("socksProxyPort", "9050");
+            System.setProperty("socksProxyHost", "localhost");
+            System.setProperty("socksProxyPort", "9050");
 
             // need http protocol, set this as a Google bot agent :)
             Document doc = Jsoup
