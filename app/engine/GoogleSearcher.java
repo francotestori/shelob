@@ -18,13 +18,13 @@ import org.jsoup.select.Elements;
 /**
  * Created by lucas on 05/10/15.
  */
-public class GoogleSearcher {
+public class FunnyCrawler {
 
     private static PrintWriter writer;
 
 
     public static void createTextFile(String fileName) throws FileNotFoundException {
-        writer = new PrintWriter(fileName);
+        //writer = new PrintWriter(fileName);
     }
     public static void searchLinkedinUrl(String searchName) throws UnsupportedEncodingException, InterruptedException {
 
@@ -40,26 +40,20 @@ public class GoogleSearcher {
             }
             Set<String> result = getDataFromGoogle(nameSplit, searcher);
 
-//            writer.println("ANALIZANDO USUARIO URL VACIO: ");
-//            writer.println(searchName);
-
             System.out.println("ANALIZANDO USUARIO URL VACIO: ");
             System.out.println(searchName);
-            result.forEach(System.out::println);
-
+            for(String temp : result){
+                System.out.println(temp);
+            }
             System.out.println(result.size());
-
-//            result.forEach(writer::println);
-//            writer.println(result.size());
-//            writer.println("");
+            System.out.println("");
         }
     }
 
     public static void closeWriter() {
         writer.close();
-        System.getProperties().put("proxySet", "false");
-        System.getProperties().put("proxyHost", "");
-        System.getProperties().put("proxyPort", "");
+        System.clearProperty("socksProxyHost");
+        System.clearProperty("socksProxyPort");
     }
 
     public static String getDomainName(String[] name, String url){
@@ -74,23 +68,20 @@ public class GoogleSearcher {
             //Borro los caracteres '/url?q='
             domainName = url.substring(7);
 
-            boolean nameInURL = false;
-            for (String aName : name) {
-                if (domainName.contains(aName.toLowerCase())) {
-                    nameInURL = true;
-                }
-            }
-
-            if (nameInURL) {
+//            if (url.contains(name[0]) || url.contains(name[1])) {
                 //Limpio los parámetros pasados por url
                 if (domainName.contains("&")) {
                     domainNameSplitByAmper = domainName.split("&");
                     domainName = domainNameSplitByAmper[0];
+                    if (domainName.contains("%")) {
+                        domainNameSplitByPerc = domainName.split("%");
+                        domainName = domainNameSplitByPerc[0];
+                    }
                 }
-            }
-            else {
-                domainName = "";
-            }
+//            }
+//            else {
+//                domainName = "";
+//            }
         }
 
         return domainName;
@@ -101,11 +92,10 @@ public class GoogleSearcher {
         Set<String> result = new HashSet<String>();
         String request = "https://www.google.com.ar/search?q=" + query + "&num=10";
 
+        System.setProperty("socksProxyHost", "127.0.0.1");
+        System.setProperty("socksProxyPort", "9050");
+
         try {
-
-            System.setProperty("socksProxyHost", "localhost");
-            System.setProperty("socksProxyPort", "9050");
-
             // need http protocol, set this as a Google bot agent :)
             Document doc = Jsoup
                     .connect(request)
