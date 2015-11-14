@@ -2,7 +2,7 @@ package controllers
 
 import java.io.File
 
-import engine.FunnyCrawler
+import engine.GoogleSearcher
 import generators.ZipGenerator
 import play.api.mvc.{Action, Controller}
 import processors.CSVProcessor
@@ -28,48 +28,70 @@ object Shelob extends Controller {
 
     val db = Database.forURL(Play.application.configuration.getString("db.default.url").get,"sa","")
 
-    try{
+    try {
 
-//      val namesNullUrl : List[String] = CSVProcessor.getNullURL(ShelobConstants.UPLOADER_PATH + file)
-//
-//      FunnyCrawler.createTextFile("/home/lucas/resultadoCrawler.txt")
-//      namesNullUrl.foreach(name => FunnyCrawler.searchLinkedinUrl(name))
-//      FunnyCrawler.closeWriter()
+      val namesNullUrl: List[String] = CSVProcessor.getNullURL(ShelobConstants.UPLOADER_PATH + file)
 
-      val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
+      GoogleSearcher.createTextFile(ShelobConstants.UPLOADER_PATH + "resultadoCrawler.txt")
+//      namesNullUrl.foreach(name => GoogleSearcher.searchLinkedinUrl(name))
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
 
-      LinkedInWizard.run(urls)
+      GoogleSearcher.closeWriter()
 
-      generateCSVs
+      //      val urls : List[String] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
+      //
+      //      LinkedInWizard.run(urls)
+      //
+      //      generateCSVs
+      //
+      //      val files = Iterable(
+      //        ShelobConstants.ZIPPER_PATH + "personas.csv",
+      //        ShelobConstants.ZIPPER_PATH + "negocio.csv",
+      //        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
+      //        ShelobConstants.ZIPPER_PATH + "academia.csv",
+      //        ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
+      //      )
+      //
+      //      createZip(ShelobConstants.SHELOB_ZIP, files)
+      //
+      //      val delete = Iterable(
+      //        ShelobConstants.ZIPPER_PATH + "personas.csv",
+      //        ShelobConstants.ZIPPER_PATH + "negocio.csv",
+      //        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
+      //        ShelobConstants.ZIPPER_PATH + "academia.csv",
+      //        ShelobConstants.ZIPPER_PATH + "historial-academico.csv",
+      //        ShelobConstants.UPLOADER_PATH + file
+      //      )
+      //
+      //      FileApocalypse.judgement_day
+      //      FileApocalypse.file_anihilation(delete)
+      //
+      //      Redirect(routes.Shelob.download())
+      Ok
 
-      val files = Iterable(
-        ShelobConstants.ZIPPER_PATH + "personas.csv",
-        ShelobConstants.ZIPPER_PATH + "negocio.csv",
-        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
-        ShelobConstants.ZIPPER_PATH + "academia.csv",
-        ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
-      )
+          }
 
-      createZip(ShelobConstants.SHELOB_ZIP, files)
-
-      val delete = Iterable(
-        ShelobConstants.ZIPPER_PATH + "personas.csv",
-        ShelobConstants.ZIPPER_PATH + "negocio.csv",
-        ShelobConstants.ZIPPER_PATH + "experiencia.csv",
-        ShelobConstants.ZIPPER_PATH + "academia.csv",
-        ShelobConstants.ZIPPER_PATH + "historial-academico.csv",
-        ShelobConstants.UPLOADER_PATH + file
-      )
-
-      FileApocalypse.judgement_day
-      FileApocalypse.file_anihilation(delete)
-
-      Redirect(routes.Shelob.download())
-
-    }
-
-    finally db.close()
-
+          finally db.close()
 
   }
 
