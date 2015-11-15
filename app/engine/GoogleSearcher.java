@@ -34,6 +34,12 @@ public class GoogleSearcher {
         if (searchName != null) {
 
             String[] nameSplit = searchName.split(" ");
+            for (int i = 0; i < nameSplit.length - 1; i++) {
+                if (!Character.isLetter(nameSplit[i].charAt(0)))
+                    nameSplit[i] = nameSplit[i].substring(1);
+                else if (!Character.isLetter(nameSplit[i].charAt(nameSplit[i].length() - 1)))
+                    nameSplit[i] = nameSplit[i].substring(0, nameSplit[i].length() - 1);
+            }
             String searcher = "linkedIn";
 
             int i = 0;
@@ -117,19 +123,20 @@ public class GoogleSearcher {
                     if (nameOnURL.contains(userName[i].toLowerCase())) {
 
                         //ACA MIRO SI EN VEZ DEL NOMBRE ENTERO ESTA SOLO UNA PARTE...
-                        //MIRO EL APELLIDO Y LA PRIMER LETRA DEL NOMBRE
-                        if (i != 0 && nameOnURL.contains("" + userName[i - 1].toLowerCase().charAt(0)))
-                            isCorrect = true;
                         //MIRO EL NOMBRE Y LA PRIMER LETRA DEL APELLIDO
-                        else if (i != (userName.length - 1) && nameOnURL.contains("" + userName[i + 1].toLowerCase().charAt(0)))
-                            isCorrect = true;
-
-                        //FALTA PULIR ESTO
-                        if (isCorrect && (nameOnURL.length() > (userName[i].length() + userName.length - 1)))
-                            isCorrect = false;
-                        //FALTA ACLARAR QUE NO HAYA OTRO NOMBRE O APELLIDO MAS, SOLO LETRAS
-                        //TENGO QUE CHEQUEAR QUE HAYA LAS ELTRAS DEL RESTO, PUEDE FALTAR LETRAS, PERO NO PUEDEN SOBRAR
-                        //TANTO MAS QUE LO QUE YA TENGO
+                        if (i != (userName.length - 1) && nameOnURL.contains("" + userName[i + 1].toLowerCase().charAt(0))) {
+                            if (nameOnURL.contains(userName[i + 1].toLowerCase())) {
+                                if (nameOnURL.length() < (userName[i].length() + userName[i + 1].length() + 3))
+                                    isCorrect = true;
+                            }
+                            else if (nameOnURL.length() < (userName[i].length() + 5))
+                                isCorrect = true;
+                        }
+                        //MIRO EL APELLIDO Y LA PRIMER LETRA DEL NOMBRE
+                        else if (i != 0 && nameOnURL.contains("" + userName[i - 1].toLowerCase().charAt(0))) {
+                            if (nameOnURL.length() < (userName[i].length() + 5))
+                                isCorrect = true;
+                        }
                     }
                     i++;
                 }
