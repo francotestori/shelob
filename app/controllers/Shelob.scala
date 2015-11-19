@@ -30,31 +30,17 @@ object Shelob extends Controller {
 
     try {
 
-      val namesNullUrl: List[String] = CSVProcessor.getNullURL(ShelobConstants.UPLOADER_PATH + file)
+      val namesNullUrl: List[(String, String)] =
+        CSVProcessor.getNullURLTuples(ShelobConstants.UPLOADER_PATH + file)
+      val rolesNullUrl: List[(String, String, String)] =
+        CSVProcessor.getNullURLTuplesWithRoles(ShelobConstants.UPLOADER_PATH + "roles+users-argentina.csv")
 
       GoogleSearcher.createTextFile(ShelobConstants.UPLOADER_PATH + "resultadoCrawler.txt")
 //      namesNullUrl.foreach(name => GoogleSearcher.searchLinkedinUrl(name))
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
-      GoogleSearcher.searchLinkedinUrl(namesNullUrl.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head)
+
+      for (i <- 0 to 5) {
+        GoogleSearcher.searchLinkedinUrl(namesNullUrl(i)._2)
+      }
 
       GoogleSearcher.closeWriter()
 
