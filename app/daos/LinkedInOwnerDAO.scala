@@ -36,4 +36,6 @@ class LinkedInOwnerDAO (implicit ec: ExecutionContext){
 
   def getAllRows : Future[Seq[LinkedInOwner]] = db.run(linkedInOwners.drop(0).result)
 
+  def emptyTable = db.run(linkedInOwners.filter(_.id in linkedInOwners.sortBy(_.id.asc).map(_.id)).delete)
+
 }

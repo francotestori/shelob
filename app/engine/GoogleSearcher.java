@@ -6,10 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.github.tototoshi.csv.CSVWriter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,6 +23,7 @@ public class GoogleSearcher {
     public static void createTextFile(String fileName) throws FileNotFoundException {
         writer = new PrintWriter(fileName);
     }
+
     public static void searchLinkedinUrl(String searchName) throws UnsupportedEncodingException, InterruptedException {
 
         if (searchName != null) {
@@ -45,7 +43,10 @@ public class GoogleSearcher {
 
             System.out.println("ANALIZANDO USUARIO URL VACIO: ");
             System.out.println(searchName);
-            result.forEach(System.out::println);
+            for (String s : result) {
+
+            }
+//            result.forEach(System.out::println);
 
             System.out.println(result.size());
 

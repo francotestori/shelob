@@ -37,4 +37,6 @@ class AcademicBackgroundDAO (implicit ec: ExecutionContext){
 
   def getAllRows : Future[Seq[AcademicBackground]] = db.run(academicBackgrounds.drop(0).result)
 
+  def emptyTable = db.run(academicBackgrounds.filter(_.id in academicBackgrounds.sortBy(_.id.asc).map(_.id)).delete)
+
 }

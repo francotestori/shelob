@@ -49,7 +49,7 @@ constraint pk_academic_background primary key (id)
 );
 
 create table OWNER_STATE(
-id                          bigint auto_increment  not null,
+id                          bigint not null,
 description                 varchar(255),
 constraint pk_owner_state primary key (id)
 );

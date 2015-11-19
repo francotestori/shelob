@@ -2,6 +2,7 @@ package utils
 
 import java.io.File
 
+import daos._
 import play.api.Play.current
 import play.api.Play
 
@@ -21,22 +22,39 @@ object FileApocalypse {
 
   private val db = Database.forURL(Play.application.configuration.getString("db.default.url").get,"sa","")
 
+  /**DAO variables*/
+  private val ownerDAO : LinkedInOwnerDAO = new LinkedInOwnerDAO()
+  private val institutionDAO : BusinessInstitutionDAO = new BusinessInstitutionDAO()
+  private val bBackgroundDAO : BusinessBackgroundDAO = new BusinessBackgroundDAO()
+  private val academyDAO : AcademicInstitutionDAO = new AcademicInstitutionDAO()
+  private val aBackgroundDAO : AcademicBackgroundDAO = new AcademicBackgroundDAO()
+
   def judgement_day = {
     Await.result(db.run(sqlu"SET REFERENTIAL_INTEGRITY FALSE;"), Duration.Inf)
     Await.result(db.run(sqlu"TRUNCATE TABLE ACADEMIC_BACKGROUND;"), Duration.Inf)
     Await.result(db.run(sqlu"TRUNCATE TABLE BUSINESS_BACKGROUND;"), Duration.Inf)
+    Await.result(db.run(sqlu"TRUNCATE TABLE LINKEDIN_OWNER;"), Duration.Inf)
+    Await.result(db.run(sqlu"SET REFERENTIAL_INTEGRITY TRUE;"), Duration.Inf)
     Await.result(db.run(sqlu"TRUNCATE TABLE ACADEMIC_INSTITUTION;"), Duration.Inf)
     Await.result(db.run(sqlu"TRUNCATE TABLE BUSINESS_INSTITUTION;"), Duration.Inf)
-    Await.result(db.run(sqlu"TRUNCATE TABLE LINKEDIN_OWNER;"), Duration.Inf)
+  }
+
+  def judgement_day2 = {
+    Await.result(db.run(sqlu"SET REFERENTIAL_INTEGRITY FALSE;"), Duration.Inf)
+    Await.result(aBackgroundDAO.emptyTable,Duration.Inf)
+    Await.result(bBackgroundDAO.emptyTable,Duration.Inf)
+    Await.result(academyDAO.emptyTable,Duration.Inf)
+    Await.result(institutionDAO.emptyTable,Duration.Inf)
+    Await.result(ownerDAO.emptyTable,Duration.Inf)
     Await.result(db.run(sqlu"SET REFERENTIAL_INTEGRITY TRUE;"), Duration.Inf)
   }
 
   def restartIdentities = {
-    Await.result(db.run(sqlu"ALTER TABLE ALTER ACADEMIC_BACKGROUND COLUMN id RESTART WITH 1;"), Duration.Inf)
-    Await.result(db.run(sqlu"ALTER TABLE ALTER ACADEMIC_BACKGROUND COLUMN id RESTART WITH 1;"), Duration.Inf)
-    Await.result(db.run(sqlu"ALTER TABLE ALTER ACADEMIC_INSTITUTION COLUMN id RESTART WITH 1;"), Duration.Inf)
-    Await.result(db.run(sqlu"ALTER TABLE ALTER BUSINESS_INSTITUTION COLUMN id RESTART WITH 1;"), Duration.Inf)
-    Await.result(db.run(sqlu"ALTER TABLE ALTER LINKEDIN_OWNER COLUMN id RESTART WITH 1;"), Duration.Inf)
+    Await.result(db.run(sqlu"ALTER TABLE ACADEMIC_BACKGROUND ALTER  COLUMN id RESTART WITH 1;"), Duration.Inf)
+    Await.result(db.run(sqlu"ALTER TABLE ACADEMIC_BACKGROUND ALTER COLUMN id RESTART WITH 1;"), Duration.Inf)
+    Await.result(db.run(sqlu"ALTER TABLE ACADEMIC_INSTITUTION ALTER COLUMN id RESTART WITH 1;"), Duration.Inf)
+    Await.result(db.run(sqlu"ALTER TABLE BUSINESS_INSTITUTION ALTER COLUMN id RESTART WITH 1;"), Duration.Inf)
+    Await.result(db.run(sqlu"ALTER TABLE LINKEDIN_OWNER ALTER COLUMN id RESTART WITH 1;"), Duration.Inf)
 
   }
 

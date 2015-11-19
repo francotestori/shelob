@@ -2,7 +2,6 @@ package controllers
 
 import java.io.File
 
-import engine.FunnyCrawler
 import generators.ZipGenerator
 import play.api.mvc.{Action, Controller}
 import processors.CSVProcessor
@@ -56,7 +55,8 @@ object Shelob extends Controller {
       )
 
 //      FileApocalypse.judgement_day
-//      FileApocalypse.restartIdentities
+      FileApocalypse.judgement_day2
+      FileApocalypse.restartIdentities
       FileApocalypse.file_anihilation(delete)
 
       Redirect(routes.Shelob.download())

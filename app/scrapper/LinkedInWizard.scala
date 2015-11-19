@@ -53,11 +53,11 @@ class LinkedInWizard {
 
           index = i
 
-          if (!getOwnerName.isEmpty) {
+//          if (!getOwnerName.isEmpty) {
             val owner: Long = insertOwner(ids(i), searched, ok.id.get).id.get
             insertBusinessInfo(owner)
             insertAcademicInfo(owner)
-          }
+//          }
         }
       }
 
@@ -67,10 +67,10 @@ class LinkedInWizard {
   private def switch(urls : List[String], n : Int) : Boolean ={
     url = urls(n)
 
-    try
+    try{
       document = Jsoup.connect(url).timeout(10*1000).get
       true
-
+    }
     catch {
         case se : HttpStatusException => switch(urls,n + 1)
         case uh : UnknownHostException => switch(urls, n + 1)
@@ -123,6 +123,7 @@ class LinkedInWizard {
     }
   }
 
+//  document.getElementsByAttributeValueMatching("class",Pattern.compile("position"))
   private def getExperiences : Elements = document.getElementsByAttributeValueMatching("id",Pattern.compile("experience-[0-9]+[0-9]*"))
 
   private def processBusiness(element : Element, owner : Long) ={
