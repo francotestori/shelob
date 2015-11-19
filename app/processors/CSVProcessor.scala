@@ -21,7 +21,7 @@ class CSVProcessor {
 
   }
 
-  def empty_urls (file : String): List[String]= {
+  def getEmpty_urlsColumn (file : String, columnName : String): List[String]= {
 
     val reader = CSVReader.open(new File(file))
 
@@ -29,7 +29,7 @@ class CSVProcessor {
     inputs.filter{ input =>
       val linkedinURL = input.get("linkedin_url")
       linkedinURL.isEmpty || linkedinURL.get.equalsIgnoreCase(" ") || linkedinURL.get.equalsIgnoreCase("")
-    }.map(_.get("name").get).distinct
+    }.map(_.get(columnName).get)
   }
 
   def writeLinkedInOwners (list : Seq[LinkedInOwner], fileName : String): Unit = {
@@ -85,7 +85,13 @@ object CSVProcessor {
 
   def process (file : String): List[(String,String)] = processor.linkedIn_urls(file)
 
-  def getNullURL (file: String): List[String] = processor.empty_urls(file)
+  def getNullURLTuples (file: String): List[(String, String)] =
+    (processor.getEmpty_urlsColumn(file, "id") zip processor.getEmpty_urlsColumn(file, "name")).distinct
+
+  def getNullURLTuplesWithRoles (file: String): List[(String, String, String)] =
+    (processor.getEmpty_urlsColumn(file, "id"),
+      processor.getEmpty_urlsColumn(file, "startup name"),
+      processor.getEmpty_urlsColumn(file, "role")).zipped.toList
 
   def writeLO (list: Seq[LinkedInOwner], fileName : String) = processor.writeLinkedInOwners(list, fileName)
 
