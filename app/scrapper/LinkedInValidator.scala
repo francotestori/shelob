@@ -8,7 +8,7 @@ import org.jsoup.nodes.Element
 object LinkedInValidator {
 
   def validateUrl(url : String) : Boolean = {
-    !url.isEmpty && !"".equals(url) && url.contains("linkedin")
+    !url.isEmpty && !"".equals(url) && url.contains("linkedin") && !url.contains("company")
   }
 
   def validateBusiness(role : String, institute : String, interval : String): Boolean = {

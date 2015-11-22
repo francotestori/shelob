@@ -83,7 +83,7 @@ object CSVProcessor {
 
   val processor = new CSVProcessor()
 
-  def process (file : String): List[(String,String)] = processor.linkedIn_urls(file)
+  def process (file : String): List[(String,String)] = processor.linkedIn_urls(file).distinct
 
   def getNullURLTuples (file: String): List[(String, String)] =
     (processor.getEmpty_urlsColumn(file, "id") zip processor.getEmpty_urlsColumn(file, "name")).distinct

@@ -22,6 +22,8 @@ class LinkedInWizard {
 
   private var url : String = null
   private var document : Document = null
+  private var connectionCounter = 0
+  private var errorsList : List[(String,String)]  = List()
 
   /**DAO variables*/
   private val ownerDAO : LinkedInOwnerDAO = new LinkedInOwnerDAO()
@@ -56,6 +58,8 @@ class LinkedInWizard {
     }
   }
 
+  private def reRunErrors(errors : List[(String,String)]) = run(errors,true)
+
   private def connect(url : String, id : String,searched : Boolean) : Unit = {
     this.url = url
     try{
@@ -64,11 +68,28 @@ class LinkedInWizard {
     catch {
       case st : SocketTimeoutException => connect(url,id,searched)
       case se : HttpStatusException => {
-        insertOwner(id,searched,urlError.id.get)
-        println(se.getUrl)
+        connectionCounter = connectionCounter + 1
+        if(connectionCounter >= 3){
+          connectionCounter = 0
+          errorsList = (url,id) :: errorsList
+          insertOwner(id,searched,urlError.id.get)
+        }
+        else{
+          connect(url,id,searched)
+        }
       }
       //TODO UnknownHostException se puede deber a problemas de conexion o a que el server del url es inexistente. Ver de desambiguar casos
-      case uh : UnknownHostException => insertOwner(id,searched,connectionError.id.get)
+      case uh : UnknownHostException =>{
+        connectionCounter = connectionCounter + 1
+        if(connectionCounter > 2){
+          connectionCounter = 0
+          errorsList = (url,id) :: errorsList
+          insertOwner(id,searched,connectionError.id.get)
+        }
+        else{
+          connect(url,id,searched)
+        }
+      }
     }
   }
 
@@ -194,6 +215,12 @@ class LinkedInWizard {
   def getAcademyTable = Await.result(academyDAO.getAllRows, Duration.Inf)
   def getABTable = Await.result(aBackgroundDAO.getAllRows, Duration.Inf)
 
+  def getErrors = {
+    val errors = errorsList
+    errorsList = List()
+    errors
+  }
+
 }
 
 object LinkedInWizard {
@@ -204,6 +231,8 @@ object LinkedInWizard {
   def run(urls : List[(String,String)], searched : Boolean) = {
     size = urls.size
     wizard.run(urls,searched)
+    val errors = wizard.getErrors
+    wizard.reRunErrors(errors)
   }
 
   def getSize = size
