@@ -9,7 +9,9 @@ object IntervalSpider {
 
   def runBusiness(element : Element): String = {
     try {
-      element.children().get(0).children().get(1).text()
+      var item = element.child(0).getElementsByClass("date-range").text()
+      if(item.isEmpty) item = element.getElementsByClass("date-range").text()
+      item
     } catch {
       case iob: IndexOutOfBoundsException => ""
     }
@@ -17,17 +19,18 @@ object IntervalSpider {
 
 
   def runAcademy(element : Element): String = {
-    try {
-      if (element.children().get(0).children().get(0).text().equals("")) {
-        return element.children().get(0).children().get(2).text()
-      }
-
-      if (element.children().get(0).children().get(0).children().get(0).text().equals("")) {
-        return element.children().get(0).children().get(0).children().get(2).text()
-      }
-      element.children().get(0).children().get(0).children().get(1).text()
-    } catch {
-      case iob: IndexOutOfBoundsException => ""
-    }
+    element.getElementsByClass("date-range").text()
+//    try {
+//      if (element.children().get(0).children().get(0).text().equals("")) {
+//        return element.children().get(0).children().get(2).text()
+//      }
+//
+//      if (element.children().get(0).children().get(0).children().get(0).text().equals("")) {
+//        return element.children().get(0).children().get(0).children().get(2).text()
+//      }
+//      element.children().get(0).children().get(0).children().get(1).text()
+//    } catch {
+//      case iob: IndexOutOfBoundsException => ""
+//    }
   }
 }

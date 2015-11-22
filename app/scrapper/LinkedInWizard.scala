@@ -20,8 +20,6 @@ import ExecutionContext.Implicits.global
  */
 class LinkedInWizard {
 
-  private var index : Long = 0
-
   private var url : String = null
   private var document : Document = null
 
@@ -34,59 +32,59 @@ class LinkedInWizard {
 
   /**Constantes de estado {OK - CONNECTION ERROR - VALIDATION ERROR - URL ERROR}*/
   private val ok =  Await.result(new OwnerStateDAO().selectByDescription("Scrap OK"), Duration.Inf).get
-  private val urlError =  Await.result(new OwnerStateDAO().selectByDescription("Scrap URL ERROR"),Duration.Inf).get
-  private val validationError =  Await.result(new OwnerStateDAO().selectByDescription("Scrap VALIDATION ERROR"),Duration.Inf).get
   private val connectionError =  Await.result(new OwnerStateDAO().selectByDescription("Scrap CONNECTION ERROR"),Duration.Inf).get
+  private val validationError =  Await.result(new OwnerStateDAO().selectByDescription("Scrap VALIDATION ERROR"),Duration.Inf).get
+  private val urlError =  Await.result(new OwnerStateDAO().selectByDescription("Scrap URL ERROR"),Duration.Inf).get
 
   /** Metodo que se encarga de ejecutar el scrap de la Lista(url,tangelaId) */
   def run(urls : List[(String,String)], searched : Boolean) = {
     if(urls.nonEmpty) {
 
-      for (i <- 0 to urls.length - 1) {
+      urls.foreach { e =>
 
-        val pages = urls.map(e => e._1)
-        val ids = urls.map(i => i._2)
+        if (LinkedInValidator.validateUrl(e._1)) {
 
-        if(LinkedInValidator.validateUrl(pages(i))) {
+          connect(e._1, e._2, searched)
 
-          switch(pages, i)
-
-          index = i
-
-//          if (!getOwnerName.isEmpty) {
-            val owner: Long = insertOwner(ids(i), searched, ok.id.get).id.get
-            insertBusinessInfo(owner)
-            insertAcademicInfo(owner)
-//          }
+          val owner: Long = insertOwner(e._2, searched, ok.id.get).id.get
+          insertBusinessInfo(owner)
+          insertAcademicInfo(owner)
         }
+
       }
 
     }
   }
 
-  private def switch(urls : List[String], n : Int) : Boolean ={
-    url = urls(n)
-
+  private def connect(url : String, id : String,searched : Boolean) : Unit = {
+    this.url = url
     try{
       document = Jsoup.connect(url).timeout(10*1000).get
-      true
     }
     catch {
-        case se : HttpStatusException => switch(urls,n + 1)
-        case uh : UnknownHostException => switch(urls, n + 1)
-        case st : SocketTimeoutException => switch(urls, n)
+      case st : SocketTimeoutException => connect(url,id,searched)
+      case se : HttpStatusException => {
+        insertOwner(id,searched,urlError.id.get)
+        println(se.getUrl)
+      }
+      //TODO UnknownHostException se puede deber a problemas de conexion o a que el server del url es inexistente. Ver de desambiguar casos
+      case uh : UnknownHostException => insertOwner(id,searched,connectionError.id.get)
     }
   }
+
+
   /**LinkedInOwner methods*/
   private def insertOwner(tangelaId : String, searched : Boolean, state : Long): LinkedInOwner = {
       Await.result(ownerDAO.insertIfNotExists(getOwnerName, getOwnerLocation, getOwnerIndustry, url,tangelaId, searched,state), Duration.Inf)
   }
 
+  //".full-name"
   private def getOwnerName : String = {
     try
-      document.select(".full-name").get(0).text()
+      document.getElementById("name").text()
     catch{
-      case iob: IndexOutOfBoundsException => getOwnerName2
+        case iob: IndexOutOfBoundsException => getOwnerName2
+        case npe: NullPointerException => ""
     }
   }
 
@@ -103,14 +101,16 @@ class LinkedInWizard {
       document.select(".locality").get(0).text()
     catch {
       case iob: IndexOutOfBoundsException => ""
+      case npe: NullPointerException => ""
     }
   }
 
   private def getOwnerIndustry : String = {
     try
-      document.select(".industry").get(0).text()
+      document.getElementsByClass("descriptor").get(1).text()
     catch {
       case iob: IndexOutOfBoundsException => ""
+      case npe: NullPointerException => ""
     }
   }
 
@@ -123,8 +123,16 @@ class LinkedInWizard {
     }
   }
 
-//  document.getElementsByAttributeValueMatching("class",Pattern.compile("position"))
-  private def getExperiences : Elements = document.getElementsByAttributeValueMatching("id",Pattern.compile("experience-[0-9]+[0-9]*"))
+  //"experience-[0-9]+[0-9]*"
+  private def getExperiences : Elements = {
+    try{
+      document.getElementsByAttributeValueMatching("class",Pattern.compile("position"))
+    }
+    catch {
+      case iob: IndexOutOfBoundsException => new Elements()
+      case npe: NullPointerException => new Elements()
+    }
+}
 
   private def processBusiness(element : Element, owner : Long) ={
     val background : (String,String,String,String) = BusinessBackgroundStrategy.apply(element)
@@ -152,9 +160,18 @@ class LinkedInWizard {
     }
   }
 
-  private def getAcademics : Elements = document.getElementsByAttributeValueMatching("id",Pattern.compile("education-[0-9]+[0-9]*"))
+  //"education-[0-9]+[0-9]*"
+  private def getAcademics : Elements = {
+    try{
+      document.getElementsByAttributeValueMatching("class",Pattern.compile("school"))
+    }
+    catch {
+      case iob: IndexOutOfBoundsException => new Elements()
+      case npe: NullPointerException => new Elements()
+    }
+  }
 
-  private def processAcademics(element : Element, owner : Long) ={
+  private def processAcademics(element : Element, owner : Long)={
     val background = AcademicBackgroundStrategy.apply(element)
 
     if(LinkedInValidator.validateAcademic(background._1,background._2,background._3)){
@@ -177,8 +194,6 @@ class LinkedInWizard {
   def getAcademyTable = Await.result(academyDAO.getAllRows, Duration.Inf)
   def getABTable = Await.result(aBackgroundDAO.getAllRows, Duration.Inf)
 
-  def getIndex = index
-
 }
 
 object LinkedInWizard {
@@ -192,7 +207,6 @@ object LinkedInWizard {
   }
 
   def getSize = size
-  def progress = (wizard.getIndex / size) * 100
 
   def getOwnerTable = wizard.getOwnerTable
   def getInstitutionTable = wizard.getInstitutionTable

@@ -29,6 +29,7 @@ object FileApocalypse {
   private val academyDAO : AcademicInstitutionDAO = new AcademicInstitutionDAO()
   private val aBackgroundDAO : AcademicBackgroundDAO = new AcademicBackgroundDAO()
 
+  @Deprecated
   def judgement_day = {
     Await.result(db.run(sqlu"SET REFERENTIAL_INTEGRITY FALSE;"), Duration.Inf)
     Await.result(db.run(sqlu"TRUNCATE TABLE ACADEMIC_BACKGROUND;"), Duration.Inf)

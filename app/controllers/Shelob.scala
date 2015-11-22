@@ -30,21 +30,22 @@ object Shelob extends Controller {
 
     try {
 
-      val namesNullUrl: List[(String, String)] =
-        CSVProcessor.getNullURLTuples(ShelobConstants.UPLOADER_PATH + file)
-      val rolesNullUrl: List[(String, String, String)] =
-        CSVProcessor.getNullURLTuplesWithRoles(ShelobConstants.UPLOADER_PATH + "roles+users-argentina.csv")
+      val namesNullUrl: List[(String, String)] = CSVProcessor.getNullURLTuples(ShelobConstants.UPLOADER_PATH + file)
+
+      //TODO usar el archivo de roles
+//      val rolesNullUrl: List[(String, String, String)] = CSVProcessor.getNullURLTuplesWithRoles(ShelobConstants.UPLOADER_PATH + "roles+users-argentina.csv")
+
       val urls : List[(String,String)] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
 
-      GoogleSearcher.createTextFile(ShelobConstants.UPLOADER_PATH + "resultadoCrawler.txt")
-      //      namesNullUrl.foreach(name => GoogleSearcher.searchLinkedinUrl(name))
-
-      for (i <- 0 to 5) {
-        GoogleSearcher.searchLinkedinUrl(namesNullUrl(i)._2)
-      }
-
-      GoogleSearcher.closeWriter()
-      
+//      GoogleSearcher.createTextFile(ShelobConstants.UPLOADER_PATH + "resultadoCrawler.txt")
+//      //      namesNullUrl.foreach(name => GoogleSearcher.searchLinkedinUrl(name))
+//
+//      for (i <- 0 to 5) {
+//        GoogleSearcher.searchLinkedinUrl(namesNullUrl(i)._2)
+//      }
+//
+//      GoogleSearcher.closeWriter()
+//
       LinkedInWizard.run(urls,false)
 
       generateCSVs
@@ -68,7 +69,6 @@ object Shelob extends Controller {
         ShelobConstants.UPLOADER_PATH + file
       )
 
-      FileApocalypse.judgement_day
       FileApocalypse.judgement_day2
       FileApocalypse.restartIdentities
       FileApocalypse.file_anihilation(delete)
@@ -79,11 +79,7 @@ object Shelob extends Controller {
 
     finally db.close()
 
-
   }
-
-  /**Gets computation progress value*/
-  def progress = LinkedInWizard.progress
 
   /**get the size value for progress bar*/
   def getSize = LinkedInWizard.getSize
