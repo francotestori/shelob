@@ -6,9 +6,9 @@ package utils;
  */
 public class ShelobConstants {
 
-    public static final String ZIPPER_PATH = "C:\\Users\\franco\\shelobItems\\";
-    public static final String UPLOADER_PATH = "C:\\Users\\franco\\shelobUploads\\";
-    public static final String SHELOB_ZIP = "C:\\Users\\franco\\shelobDownloads\\shelob.zip";
+    public static final String ZIPPER_PATH = "/home/lucas/shelobItems/";
+    public static final String UPLOADER_PATH = "/home/lucas/shelobUploads";
+    public static final String SHELOB_ZIP = "/home/lucas/downloads/shelobDownloads/shelob.zip";
 
 
 }

@@ -35,29 +35,59 @@ object Shelob extends Controller {
 
       //Filters and gets roles' file pathName
       val dir = new File(ShelobConstants.UPLOADER_PATH)
-      val roles: List[File] = dir.listFiles(new FileFilter {
+      var roleFile : List[File] = List()
+      var rolesFilePath : String = ""
+      val roles: Array[File] = dir.listFiles(new FileFilter {
         override def accept(pathname: File): Boolean = pathname.getName.startsWith("roles+users-")
-      }).toList
-      val rolesFile = roles.head.getAbsolutePath
+      })
+
+      if (roles != null) {
+        roleFile = roles.toList
+        rolesFilePath = roleFile.head.getAbsolutePath
+      }
 
       //List all users with null urls to get id, startupName & role
-      val rolesNullUrl: List[(String, String, String)] = CSVProcessor.getNullURLTuplesWithRoles(rolesFile)
+      val rolesNullUrl: List[(String, String, String)] = CSVProcessor.getNullURLTuplesWithRoles(rolesFilePath)
 
       //Gets valid urls & ids tupled
       val urls : List[(String,String)] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
 
-      //TODO Make with GoogleSearcher a list of (url,id) so as to be used with LinkedIngWizard
-      GoogleSearcher.createTextFile(ShelobConstants.UPLOADER_PATH + "resultadoCrawler.txt")
-            namesNullUrl.foreach(name => GoogleSearcher.searchLinkedinUrl(name._2))
+      //Make with GoogleSearcher a list of (url,id) so as to be used with LinkedIngWizard
+      var rolesOfSpecificUser: List[(String, String)] = List()
+      var searchedURLs = List[(String, String)]()
 
-      for (i <- 0 to 5) {
-        GoogleSearcher.searchLinkedinUrl(namesNullUrl(i)._2)
+      //For each user with the linkedin url null
+      namesNullUrl.foreach{tupleUserFile =>
+        var url: List[String] = List()
+        val (idUserFile, name) = tupleUserFile
+
+        //For each user with the linkedin url null
+        rolesNullUrl.foreach{ tupleRoleFile =>
+          val (idRoleFile, startupName, role) = tupleRoleFile
+          //Compare ids to get the startup and role of a user
+          if (idUserFile == idRoleFile) {
+            rolesOfSpecificUser ::= (startupName, role)
+          }
+        }
+        //If there is a role for a specific user, use it to search the linkedin url
+        if (rolesOfSpecificUser.nonEmpty) {
+          rolesOfSpecificUser.foreach { tuple =>
+            val (startupName, role) = tuple
+            url ::= GoogleSearcher.searchLinkedinUrl(name, startupName, role)
+          }
+        }
+        else {
+          url ::= GoogleSearcher.searchLinkedinUrl(name, null, null)
+        }
+        //Generate the tuple with the searched url and the user id
+        searchedURLs ::= (url.groupBy(identity).maxBy(_._2.size)._1, idUserFile)
       }
-
-      GoogleSearcher.closeWriter()
 
       //Scrap generation of data with LinkedInWizard for non-searched urls
       LinkedInWizard.run(urls,false)
+
+      //Scrap generation of data with LinkedInWizard for searched urls
+      LinkedInWizard.run(searchedURLs,true)
 
       //File generation
       generateCSVs
@@ -80,7 +110,7 @@ object Shelob extends Controller {
         ShelobConstants.ZIPPER_PATH + "academia.csv",
         ShelobConstants.ZIPPER_PATH + "historial-academico.csv",
         ShelobConstants.UPLOADER_PATH + file,
-        ShelobConstants.UPLOADER_PATH + rolesFile
+        ShelobConstants.UPLOADER_PATH + rolesFilePath
       )
 
       //Clean up files and database

@@ -1,6 +1,5 @@
 package engine;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -16,21 +15,8 @@ import org.jsoup.select.Elements;
  */
 public class GoogleSearcher {
 
-    private static PrintWriter writer;
-
-
-    public static void createTextFile(String fileName) throws FileNotFoundException {
-        writer = new PrintWriter(fileName);
-        writer.println("ANALIZANDO USUARIO URL VACIO: ");
-    }
-
-    public static void closeWriter() {
-        writer.close();
-        System.getProperties().put("proxyHost", "");
-        System.getProperties().put("proxyPort", "");
-    }
-
-    public static void searchLinkedinUrl(String searchName) throws UnsupportedEncodingException, InterruptedException {
+    public static String searchLinkedinUrl(String searchName, String startup, String role)
+            throws UnsupportedEncodingException, InterruptedException {
 
         if (searchName != null) {
 
@@ -50,12 +36,16 @@ public class GoogleSearcher {
                 searcher = searcher + "%20" + nameSplit[i];
                 i++;
             }
+            if (startup != null)
+                searcher = searcher + "%20" + startup;
+            if (role != null)
+                searcher = searcher + "%20" + role;
+
             ArrayList<String> result = getDataFromGoogle(nameSplit, searcher);
 
-            String finalURL = selectCorrectURL(nameSplit, result);
-
-            writer.println(searchName + " - " + finalURL);
+            return selectCorrectURL(nameSplit, result);
         }
+        return null;
     }
 
     private static ArrayList<String> getDataFromGoogle(String[] name, String query) throws InterruptedException {
@@ -89,7 +79,7 @@ public class GoogleSearcher {
         } catch (IOException e) {
             if (e.getMessage().equals("HTTP error fetching URL"))
                 Thread.sleep(1000);
-                getDataFromGoogle(name, query);
+//                getDataFromGoogle(name, query);
             e.printStackTrace();
         }
         return result;

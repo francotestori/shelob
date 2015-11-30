@@ -89,9 +89,14 @@ object CSVProcessor {
     (processor.getEmpty_urlsColumn(file, "id") zip processor.getEmpty_urlsColumn(file, "name")).distinct
 
   def getNullURLTuplesWithRoles (file: String): List[(String, String, String)] =
-    (processor.getEmpty_urlsColumn(file, "id"),
-      processor.getEmpty_urlsColumn(file, "startup name"),
-      processor.getEmpty_urlsColumn(file, "role")).zipped.toList
+    if (!file.equals("")) {
+      (processor.getEmpty_urlsColumn(file, "id"),
+        processor.getEmpty_urlsColumn(file, "startup name"),
+        processor.getEmpty_urlsColumn(file, "role")).zipped.toList
+    }
+  else {
+      List()
+    }
 
   def writeLO (list: Seq[LinkedInOwner], fileName : String) = processor.writeLinkedInOwners(list, fileName)
 
