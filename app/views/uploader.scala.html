@@ -18,9 +18,10 @@
         <div class="container" style="margin-top: 20px">
 
         @helper.form(action = routes.Uploader.upload(),'enctype -> "multipart/form-data") {
-            <span class="dz-message">Click to upload.</span>
+            <span class="dz-message" style="color : green ;">Users file (mandatory): </span>
 
             <div class="row">
+
                 <div class="col-lg-6 col-sm-6 col-12">
                     <div class="input-group" style="left:50%">
                         <span class="input-group-btn">
@@ -34,6 +35,26 @@
 
                 <br>
                 <br>
+
+                <span class="dz-message" style="color: darkgoldenrod">Roles file (optional): </span>
+
+                <br>
+
+                <div class="col-lg-6 col-sm-6 col-12">
+                    <div class="input-group" style="left:50%">
+                        <span class="input-group-btn">
+                            <span class="btn btn-primary btn-file">
+                                Browse&hellip; <input type="file" name="rolesUpload" multiple>
+                            </span>
+                        </span>
+                        <input type="text" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <br>
+                <br>
+                <br>
+
                 <input type="submit" class="btn btn-primary btn-file" value="Upload!">
             </div>
         }

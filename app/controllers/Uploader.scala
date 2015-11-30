@@ -16,9 +16,15 @@ object Uploader extends Controller{
 
   /**Adds input CSV into a determined path so it can later be analyzed*/
   def upload() = Action(parse.multipartFormData) {  request =>
+
+    //Roles Upload
+    request.body.file("rolesUpload").foreach(file =>
+      file.ref.moveTo(new File(ShelobConstants.UPLOADER_PATH + file.filename))
+    )
+
+    //Users Upload
     request.body.file("fileUpload").map { file =>
       val filename = file.filename
-      val contentType = file.contentType.get
       file.ref.moveTo(new File(ShelobConstants.UPLOADER_PATH + filename))
       Redirect(routes.Shelob.index(filename))
     }.getOrElse {

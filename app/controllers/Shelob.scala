@@ -1,6 +1,6 @@
 package controllers
 
-import java.io.File
+import java.io.{FileFilter, File}
 
 import engine.GoogleSearcher
 import generators.ZipGenerator
@@ -30,24 +30,36 @@ object Shelob extends Controller {
 
     try {
 
+      //Lists all users with null urls to get id & name
       val namesNullUrl: List[(String, String)] = CSVProcessor.getNullURLTuples(ShelobConstants.UPLOADER_PATH + file)
 
-      //TODO usar el archivo de roles
-//      val rolesNullUrl: List[(String, String, String)] = CSVProcessor.getNullURLTuplesWithRoles(ShelobConstants.UPLOADER_PATH + "roles+users-argentina.csv")
+      //Filters and gets roles' file pathName
+      val dir = new File(ShelobConstants.UPLOADER_PATH)
+      val roles: List[File] = dir.listFiles(new FileFilter {
+        override def accept(pathname: File): Boolean = pathname.getName.startsWith("roles+users-")
+      }).toList
+      val rolesFile = roles.head.getAbsolutePath
 
+      //List all users with null urls to get id, startupName & role
+      val rolesNullUrl: List[(String, String, String)] = CSVProcessor.getNullURLTuplesWithRoles(rolesFile)
+
+      //Gets valid urls & ids tupled
       val urls : List[(String,String)] = CSVProcessor.process(ShelobConstants.UPLOADER_PATH + file)
 
-//      GoogleSearcher.createTextFile(ShelobConstants.UPLOADER_PATH + "resultadoCrawler.txt")
-//      //      namesNullUrl.foreach(name => GoogleSearcher.searchLinkedinUrl(name))
-//
-//      for (i <- 0 to 5) {
-//        GoogleSearcher.searchLinkedinUrl(namesNullUrl(i)._2)
-//      }
-//
-//      GoogleSearcher.closeWriter()
-//
+      //TODO Make with GoogleSearcher a list of (url,id) so as to be used with LinkedIngWizard
+      GoogleSearcher.createTextFile(ShelobConstants.UPLOADER_PATH + "resultadoCrawler.txt")
+            namesNullUrl.foreach(name => GoogleSearcher.searchLinkedinUrl(name._2))
+
+      for (i <- 0 to 5) {
+        GoogleSearcher.searchLinkedinUrl(namesNullUrl(i)._2)
+      }
+
+      GoogleSearcher.closeWriter()
+
+      //Scrap generation of data with LinkedInWizard for non-searched urls
       LinkedInWizard.run(urls,false)
 
+      //File generation
       generateCSVs
 
       val files = Iterable(
@@ -58,6 +70,7 @@ object Shelob extends Controller {
         ShelobConstants.ZIPPER_PATH + "historial-academico.csv"
       )
 
+      //Zip generation
       createZip(ShelobConstants.SHELOB_ZIP, files)
 
       val delete = Iterable(
@@ -66,9 +79,11 @@ object Shelob extends Controller {
         ShelobConstants.ZIPPER_PATH + "experiencia.csv",
         ShelobConstants.ZIPPER_PATH + "academia.csv",
         ShelobConstants.ZIPPER_PATH + "historial-academico.csv",
-        ShelobConstants.UPLOADER_PATH + file
+        ShelobConstants.UPLOADER_PATH + file,
+        ShelobConstants.UPLOADER_PATH + rolesFile
       )
 
+      //Clean up files and database
       FileApocalypse.judgement_day2
       FileApocalypse.restartIdentities
       FileApocalypse.file_anihilation(delete)
