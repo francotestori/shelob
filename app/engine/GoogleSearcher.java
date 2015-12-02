@@ -3,12 +3,15 @@ package engine;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import javax.net.SocketFactory;
 
 /**
  * Created by lucas on 05/10/15.
@@ -48,15 +51,27 @@ public class GoogleSearcher {
         return null;
     }
 
+    public static void printTime() {
+        java.util.Date date= new java.util.Date();
+        System.out.println("#####" + new Timestamp(date.getTime()));
+    }
+
+    public static void startTorClient() {
+        System.setProperty("socksProxyHost", "localhost");
+        System.setProperty("socksProxyPort", "9050");
+    }
+
+    public static void stopTorClient() {
+        System.clearProperty("http.proxyHost");
+        System.clearProperty("http.proxyPort");
+    }
+
     private static ArrayList<String> getDataFromGoogle(String[] name, String query) throws InterruptedException {
 
         ArrayList<String> result = new ArrayList<>();
         String request = "https://www.google.com.ar/search?q=" + query + "&num=10";
 
         try {
-            System.setProperty("socksProxyHost", "localhost");
-            System.setProperty("socksProxyPort", "9050");
-
             // need http protocol, set this as a Google bot agent :)
             Document doc = Jsoup
                     .connect(request)
@@ -78,7 +93,7 @@ public class GoogleSearcher {
             }
         } catch (IOException e) {
             if (e.getMessage().equals("HTTP error fetching URL"))
-                Thread.sleep(1000);
+//                Thread.sleep(1000);
 //                getDataFromGoogle(name, query);
             e.printStackTrace();
         }
@@ -126,33 +141,35 @@ public class GoogleSearcher {
                         } else if (nameOnURL.equalsIgnoreCase(String.join("-", userName))) {
                             url = anURL;
                             break;
-                        } else {
-                            int i = 0;
-                            while (i != userName.length) {
-                                if (nameOnURL.contains(userName[i].toLowerCase())) {
-                                    possibleAnswers.add(anURL);
-                                }
-                                i++;
-                            }
                         }
+//                        else {
+//                            int i = 0;
+//                            while (i != userName.length) {
+//                                if (nameOnURL.contains(userName[i].toLowerCase())) {
+//                                    possibleAnswers.add(anURL);
+//                                }
+//                                i++;
+//                            }
+//                        }
                     }
                 }
             }
         }
-        if (!possibleAnswers.isEmpty()) {
-            for (String answer : possibleAnswers) {
-                System.out.println(answer);
-            }
-        }
+//        if (!possibleAnswers.isEmpty()) {
+//            for (String answer : possibleAnswers) {
+//                System.out.println(answer);
+//            }
+//        }
         return url;
     }
 
     private static boolean isCorrect(String[] userName, String domain) {
         boolean isCorrect = false;
-        String[] splitURL = domain.split("/");
-        String nameOnURL = splitURL[4];
 
         if (domain.substring(8).startsWith("www.linkedin.com") || domain.substring(11).startsWith("linkedin.com")) {
+            String[] splitURL = domain.split("/");
+            String nameOnURL = splitURL[4];
+
             if (nameOnURL.equalsIgnoreCase(String.join("", userName))) {
                 isCorrect = true;
             } else if (nameOnURL.equalsIgnoreCase(String.join("-", userName))) {

@@ -56,10 +56,14 @@ object Shelob extends Controller {
       var rolesOfSpecificUser: List[(String, String)] = List()
       var searchedURLs = List[(String, String)]()
 
+      GoogleSearcher.printTime()
+      GoogleSearcher.startTorClient()
+
       //For each user with the linkedin url null
       namesNullUrl.foreach{tupleUserFile =>
         var url: List[String] = List()
         val (idUserFile, name) = tupleUserFile
+        rolesOfSpecificUser = List()
 
         //For each user with the linkedin url null
         rolesNullUrl.foreach{ tupleRoleFile =>
@@ -71,6 +75,7 @@ object Shelob extends Controller {
         }
         //If there is a role for a specific user, use it to search the linkedin url
         if (rolesOfSpecificUser.nonEmpty) {
+          url ::= GoogleSearcher.searchLinkedinUrl(name, null, null)
           rolesOfSpecificUser.foreach { tuple =>
             val (startupName, role) = tuple
             url ::= GoogleSearcher.searchLinkedinUrl(name, startupName, role)
@@ -82,6 +87,9 @@ object Shelob extends Controller {
         //Generate the tuple with the searched url and the user id
         searchedURLs ::= (url.groupBy(identity).maxBy(_._2.size)._1, idUserFile)
       }
+
+      GoogleSearcher.printTime()
+      GoogleSearcher.stopTorClient()
 
       //Scrap generation of data with LinkedInWizard for non-searched urls
       LinkedInWizard.run(urls,false)
