@@ -29,9 +29,9 @@ public class GoogleSearcher {
             //Limpio los nombres que tienen comas u otro caracter
             for (int i = 0; i < nameSplit.length - 1; i++) {
                 if (!Character.isLetter(nameSplit[i].charAt(0)))
-                    nameSplit[i] = nameSplit[i].substring(1);
+                    nameSplit[i] = nameSplit[i].substring(1).trim();
                 else if (!Character.isLetter(nameSplit[i].charAt(nameSplit[i].length() - 1)))
-                    nameSplit[i] = nameSplit[i].substring(0, nameSplit[i].length() - 1);
+                    nameSplit[i] = nameSplit[i].substring(0, nameSplit[i].length() - 1).trim();
             }
 
             int i = 0;
@@ -56,9 +56,10 @@ public class GoogleSearcher {
         System.out.println("#####" + new Timestamp(date.getTime()));
     }
 
-    public static void startTorClient() {
+    public static void startTorClient() throws InterruptedException {
         System.setProperty("socksProxyHost", "localhost");
         System.setProperty("socksProxyPort", "9050");
+        Thread.sleep(1000);
     }
 
     public static void stopTorClient() {
@@ -134,14 +135,15 @@ public class GoogleSearcher {
                     if (anURL.substring(8).startsWith("www.linkedin.com")
                             || anURL.substring(11).startsWith("linkedin.com")) {
                         String[] splitURL = anURL.split("/");
-                        String nameOnURL = splitURL[4];
-                        if (nameOnURL.equalsIgnoreCase(String.join("", userName))) {
-                            url = anURL;
-                            break;
-                        } else if (nameOnURL.equalsIgnoreCase(String.join("-", userName))) {
-                            url = anURL;
-                            break;
-                        }
+                        if (splitURL.length >= 5) {
+                            String nameOnURL = splitURL[4];
+                            if (nameOnURL.equalsIgnoreCase(String.join("", userName))) {
+                                url = anURL;
+                                break;
+                            } else if (nameOnURL.equalsIgnoreCase(String.join("-", userName))) {
+                                url = anURL;
+                                break;
+                            }
 //                        else {
 //                            int i = 0;
 //                            while (i != userName.length) {
@@ -151,6 +153,7 @@ public class GoogleSearcher {
 //                                i++;
 //                            }
 //                        }
+                        }
                     }
                 }
             }
@@ -168,34 +171,38 @@ public class GoogleSearcher {
 
         if (domain.substring(8).startsWith("www.linkedin.com") || domain.substring(11).startsWith("linkedin.com")) {
             String[] splitURL = domain.split("/");
-            String nameOnURL = splitURL[4];
+            if (splitURL.length >= 5) {
+                String nameOnURL = splitURL[4];
 
-            if (nameOnURL.equalsIgnoreCase(String.join("", userName))) {
-                isCorrect = true;
-            } else if (nameOnURL.equalsIgnoreCase(String.join("-", userName))) {
-                isCorrect = true;
-            } else {
-                int i = 0;
-                while (i != userName.length) {
-                    if (nameOnURL.contains(userName[i].toLowerCase())) {
+                if (nameOnURL.equalsIgnoreCase(String.join("", userName))) {
+                    isCorrect = true;
+                } else if (nameOnURL.equalsIgnoreCase(String.join("-", userName))) {
+                    isCorrect = true;
+                } else {
+                    int i = 0;
+                    while (i != userName.length) {
+                        if (nameOnURL.contains(userName[i].toLowerCase())) {
 
-                        //Me fijo si en vez del nombre completo solo está una parte de el.
-                        //Primero miro si está el nombre y algunas letras del apellido
-                        if (i != (userName.length - 1) && nameOnURL.contains("" + userName[i + 1].toLowerCase().charAt(0))) {
-                            if (nameOnURL.contains(userName[i + 1].toLowerCase())) {
-                                if (nameOnURL.length() < (userName[i].length() + userName[i + 1].length() + 3))
-                                    isCorrect = true;
+                            if (userName.length >= 2 && userName[1].length() != 0) {
+                                //Me fijo si en vez del nombre completo solo está una parte de el.
+                                //Primero miro si está el nombre y algunas letras del apellido
+                                if (i != (userName.length - 1) && nameOnURL.contains("" + userName[i + 1].toLowerCase().charAt(0))) {
+                                    if (nameOnURL.contains(userName[i + 1].toLowerCase())) {
+                                        if (nameOnURL.length() < (userName[i].length() + userName[i + 1].length() + 3))
+                                            isCorrect = true;
+                                    }
+                                    else if (nameOnURL.length() < (userName[i].length() + 5))
+                                        isCorrect = true;
+                                }
+                                //Luego miro si en vez, está el apellido y algunas letras del nombre
+                                else if (i != 0 && nameOnURL.contains("" + userName[i - 1].toLowerCase().charAt(0))) {
+                                    if (nameOnURL.length() < (userName[i].length() + 5))
+                                        isCorrect = true;
+                                }
                             }
-                            else if (nameOnURL.length() < (userName[i].length() + 5))
-                                isCorrect = true;
                         }
-                        //Luego miro si en vez, está el apellido y algunas letras del nombre
-                        else if (i != 0 && nameOnURL.contains("" + userName[i - 1].toLowerCase().charAt(0))) {
-                            if (nameOnURL.length() < (userName[i].length() + 5))
-                                isCorrect = true;
-                        }
+                        i++;
                     }
-                    i++;
                 }
             }
         }

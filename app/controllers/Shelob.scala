@@ -34,14 +34,14 @@ object Shelob extends Controller {
       val namesNullUrl: List[(String, String)] = CSVProcessor.getNullURLTuples(ShelobConstants.UPLOADER_PATH + file)
 
       //Filters and gets roles' file pathName
-      val dir = new File(ShelobConstants.UPLOADER_PATH)
+      val dir = new File("/home/lucas/shelobUploads/")
       var roleFile : List[File] = List()
       var rolesFilePath : String = ""
       val roles: Array[File] = dir.listFiles(new FileFilter {
         override def accept(pathname: File): Boolean = pathname.getName.startsWith("roles+users-")
       })
 
-      if (roles != null) {
+      if (roles.nonEmpty) {
         roleFile = roles.toList
         rolesFilePath = roleFile.head.getAbsolutePath
       }
@@ -94,6 +94,7 @@ object Shelob extends Controller {
       //Scrap generation of data with LinkedInWizard for non-searched urls
       LinkedInWizard.run(urls,false)
 
+      searchedURLs.filter{ case (url, _ ) => !url.equals("") }
       //Scrap generation of data with LinkedInWizard for searched urls
       LinkedInWizard.run(searchedURLs,true)
 
