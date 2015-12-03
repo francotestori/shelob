@@ -19,13 +19,13 @@ object Uploader extends Controller{
 
     //Roles Upload
     request.body.file("rolesUpload").foreach(file =>
-      file.ref.moveTo(new File("/home/lucas/shelobUploads/" + file.filename))
+      file.ref.moveTo(new File(ShelobConstants.UPLOADER_PATH + file.filename))
     )
 
     //Users Upload
     request.body.file("fileUpload").map { file =>
       val filename = file.filename
-      file.ref.moveTo(new File("/home/lucas/shelobUploads/" + filename))
+      file.ref.moveTo(new File(ShelobConstants.UPLOADER_PATH + filename))
       Redirect(routes.Shelob.index(filename))
     }.getOrElse {
       Redirect(routes.Uploader.index()).flashing(

@@ -18,10 +18,12 @@ import javax.net.SocketFactory;
  */
 public class GoogleSearcher {
 
+    private static boolean isTorRunning = false;
+
     public static String searchLinkedinUrl(String searchName, String startup, String role)
             throws UnsupportedEncodingException, InterruptedException {
 
-        if (searchName != null) {
+        if (searchName != null && isTorRunning) {
 
             String[] nameSplit = searchName.split(" ");
             String searcher = "linkedIn";
@@ -48,7 +50,7 @@ public class GoogleSearcher {
 
             return selectCorrectURL(nameSplit, result);
         }
-        return null;
+        return "";
     }
 
     public static void printTime() {
@@ -57,14 +59,19 @@ public class GoogleSearcher {
     }
 
     public static void startTorClient() throws InterruptedException {
-        System.setProperty("socksProxyHost", "localhost");
-        System.setProperty("socksProxyPort", "9050");
-        Thread.sleep(1000);
+        try {
+            System.setProperty("socksProxyHost", "localhost");
+            System.setProperty("socksProxyPort", "9050");
+            Thread.sleep(1000);
+            isTorRunning = true;
+        }
+        catch (Exception e){}
     }
 
     public static void stopTorClient() {
         System.clearProperty("http.proxyHost");
         System.clearProperty("http.proxyPort");
+        isTorRunning = false;
     }
 
     private static ArrayList<String> getDataFromGoogle(String[] name, String query) throws InterruptedException {

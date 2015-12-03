@@ -34,7 +34,7 @@ object Shelob extends Controller {
       val namesNullUrl: List[(String, String)] = CSVProcessor.getNullURLTuples(ShelobConstants.UPLOADER_PATH + file)
 
       //Filters and gets roles' file pathName
-      val dir = new File("/home/lucas/shelobUploads/")
+      val dir = new File(ShelobConstants.UPLOADER_PATH)
       var roleFile : List[File] = List()
       var rolesFilePath : String = ""
       val roles: Array[File] = dir.listFiles(new FileFilter {
