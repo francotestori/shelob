@@ -57,31 +57,31 @@ object Shelob extends Controller {
       var searchedURLs = List[(String, String)]()
 
       //For each user with the linkedin url null
-      namesNullUrl.foreach{tupleUserFile =>
-        var url: List[String] = List()
-        val (idUserFile, name) = tupleUserFile
-
-        //For each user with the linkedin url null
-        rolesNullUrl.foreach{ tupleRoleFile =>
-          val (idRoleFile, startupName, role) = tupleRoleFile
-          //Compare ids to get the startup and role of a user
-          if (idUserFile == idRoleFile) {
-            rolesOfSpecificUser ::= (startupName, role)
-          }
-        }
-        //If there is a role for a specific user, use it to search the linkedin url
-        if (rolesOfSpecificUser.nonEmpty) {
-          rolesOfSpecificUser.foreach { tuple =>
-            val (startupName, role) = tuple
-            url ::= GoogleSearcher.searchLinkedinUrl(name, startupName, role)
-          }
-        }
-        else {
-          url ::= GoogleSearcher.searchLinkedinUrl(name, null, null)
-        }
-        //Generate the tuple with the searched url and the user id
-        searchedURLs ::= (url.groupBy(identity).maxBy(_._2.size)._1, idUserFile)
-      }
+//      namesNullUrl.foreach{tupleUserFile =>
+//        var url: List[String] = List()
+//        val (idUserFile, name) = tupleUserFile
+//
+//        //For each user with the linkedin url null
+//        rolesNullUrl.foreach{ tupleRoleFile =>
+//          val (idRoleFile, startupName, role) = tupleRoleFile
+//          //Compare ids to get the startup and role of a user
+//          if (idUserFile == idRoleFile) {
+//            rolesOfSpecificUser ::= (startupName, role)
+//          }
+//        }
+//        //If there is a role for a specific user, use it to search the linkedin url
+//        if (rolesOfSpecificUser.nonEmpty) {
+//          rolesOfSpecificUser.foreach { tuple =>
+//            val (startupName, role) = tuple
+//            url ::= GoogleSearcher.searchLinkedinUrl(name, startupName, role)
+//          }
+//        }
+//        else {
+//          url ::= GoogleSearcher.searchLinkedinUrl(name, null, null)
+//        }
+//        //Generate the tuple with the searched url and the user id
+//        searchedURLs ::= (url.groupBy(identity).maxBy(_._2.size)._1, idUserFile)
+//      }
 
       //Scrap generation of data with LinkedInWizard for non-searched urls
       LinkedInWizard.run(urls,false)
