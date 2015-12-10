@@ -60,9 +60,10 @@ public class GoogleSearcher {
     }
 
     public static void startTorClient() throws InterruptedException {
-            System.setProperty("socksProxyHost", "localhost");
-            System.setProperty("socksProxyPort", "9050");
-            Thread.sleep(1000);
+        System.setProperty("socksProxyHost", "localhost");
+        System.setProperty("socksProxyPort", "9050");
+        Thread.sleep(1000);
+        isTorRunning = true;
     }
 
     public static void stopTorClient() {
@@ -97,6 +98,7 @@ public class GoogleSearcher {
                 }
             }
         } catch (SocketException e) {
+            e.printStackTrace();
             isTorRunning = false;
         } catch (IOException e) {
             if (e.getMessage().equals("HTTP error fetching URL")) {
