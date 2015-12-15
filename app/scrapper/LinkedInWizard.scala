@@ -77,6 +77,7 @@ class LinkedInWizard {
         else{
           connect(url,id,searched)
         }
+
       }
       //TODO UnknownHostException se puede deber a problemas de conexion o a que el server del url es inexistente. Ver de desambiguar casos
       case uh : UnknownHostException =>{
@@ -137,21 +138,22 @@ class LinkedInWizard {
 
   /**Business Institution&Background methods*/
   private def insertBusinessInfo(owner : Long) = {
-    val businessInfo : Elements = getExperiences
+    val businessInfo : Element = getExperiences
 
-    for(i <- 0 to businessInfo.size() - 1 by 2){
-      processBusiness(businessInfo.get(i),owner)
-    }
+    if(businessInfo != null)
+      for(i <- 0 to businessInfo.children().size() - 1 by 1){
+        processBusiness(businessInfo.child(i),owner)
+      }
   }
 
   //"experience-[0-9]+[0-9]*"
-  private def getExperiences : Elements = {
+  private def getExperiences : Element = {
     try{
-      document.getElementsByAttributeValueMatching("class",Pattern.compile("position"))
+      document.getElementsByAttributeValueMatching("class",Pattern.compile("position")).first()
     }
     catch {
-      case iob: IndexOutOfBoundsException => new Elements()
-      case npe: NullPointerException => new Elements()
+      case iob: IndexOutOfBoundsException => null
+      case npe: NullPointerException => null
     }
 }
 
@@ -174,21 +176,23 @@ class LinkedInWizard {
 
   /**Academic Institution&Background methods*/
   private def insertAcademicInfo(owner : Long) = {
-    val academicInfo : Elements = getAcademics
+    val academicInfo : Element = getAcademics
 
-    for(i <- 0 to academicInfo.size() - 1 by 2){
-      processAcademics(academicInfo.get(i),owner)
-    }
+    if(academicInfo != null)
+      for(i <- 0 to academicInfo.children().size() - 1 by 1){
+        processAcademics(academicInfo.child(i),owner)
+      }
+
   }
 
   //"education-[0-9]+[0-9]*"
-  private def getAcademics : Elements = {
+  private def getAcademics : Element = {
     try{
-      document.getElementsByAttributeValueMatching("class",Pattern.compile("school"))
+      document.getElementsByAttributeValueMatching("class",Pattern.compile("school")).first()
     }
     catch {
-      case iob: IndexOutOfBoundsException => new Elements()
-      case npe: NullPointerException => new Elements()
+      case iob: IndexOutOfBoundsException => null
+      case npe: NullPointerException => null
     }
   }
 
@@ -197,7 +201,7 @@ class LinkedInWizard {
 
     if(LinkedInValidator.validateAcademic(background._1,background._2,background._3)){
       val institution = insertAcademicInstitution(background._1)
-      insertAcademicBackground(background._2,institution.id.get,owner,background._3)
+      insertAcademicBackground(background._2,institution.id.get,owner,background._3,background._4)
     }
   }
 
@@ -205,8 +209,8 @@ class LinkedInWizard {
     Await.result(academyDAO.insertIfNotExists(name, ""),Duration.Inf)
   }
 
-  private def insertAcademicBackground(title : String, academy : Long, owner : Long, interval : String) ={
-    aBackgroundDAO.insertIfNotExists(title, academy, owner, interval, "")
+  private def insertAcademicBackground(title : String, academy : Long, owner : Long, interval : String, description : String) ={
+    aBackgroundDAO.insertIfNotExists(title, academy, owner, interval, description)
   }
 
   def getOwnerTable = Await.result(ownerDAO.getAllRows, Duration.Inf)

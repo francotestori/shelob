@@ -3,6 +3,7 @@ package engine;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -69,8 +70,8 @@ public class GoogleSearcher {
     }
 
     public static void stopTorClient() {
-        System.clearProperty("http.proxyHost");
-        System.clearProperty("http.proxyPort");
+        System.clearProperty("socksProxyHost");
+        System.clearProperty("socksProxyPort");
         isTorRunning = false;
     }
 
@@ -99,7 +100,11 @@ public class GoogleSearcher {
                         result.add(temp);
                 }
             }
-        } catch (IOException e) {
+        }
+        catch(SocketException e){
+            isTorRunning = false;
+        }
+        catch (IOException e) {
             if (e.getMessage().equals("HTTP error fetching URL"))
 //                Thread.sleep(1000);
 //                getDataFromGoogle(name, query);
