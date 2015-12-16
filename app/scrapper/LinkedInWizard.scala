@@ -76,6 +76,7 @@ class LinkedInWizard {
         if(connectionCounter >= 3){
           connectionCounter = 0
           errorsList = (url,id) :: errorsList
+          document = null
           insertOwner(id,searched,urlError.id.get)
           false
         }
@@ -90,6 +91,7 @@ class LinkedInWizard {
         if(connectionCounter > 2){
           connectionCounter = 0
           errorsList = (url,id) :: errorsList
+          document = null
           insertOwner(id,searched,connectionError.id.get)
           false
         }
@@ -108,38 +110,50 @@ class LinkedInWizard {
 
   //".full-name"
   private def getOwnerName : String = {
-    try
-      document.getElementById("name").text()
-    catch{
+    if(document != null){
+      try
+        document.getElementById("name").text()
+      catch{
         case iob: IndexOutOfBoundsException => getOwnerName2
         case npe: NullPointerException => ""
+      }
     }
+    else ""
   }
 
   private def getOwnerName2 : String = {
-    try
-      document.select("#name").get(0).text()
-    catch {
-      case iob: IndexOutOfBoundsException => ""
+    if(document != null){
+      try
+        document.select("#name").get(0).text()
+      catch {
+        case iob: IndexOutOfBoundsException => ""
+      }
     }
+    else ""
   }
 
   private def getOwnerLocation : String = {
-    try
-      document.select(".locality").get(0).text()
-    catch {
-      case iob: IndexOutOfBoundsException => ""
-      case npe: NullPointerException => ""
+    if(document != null){
+      try
+        document.select(".locality").get(0).text()
+      catch {
+        case iob: IndexOutOfBoundsException => ""
+        case npe: NullPointerException => ""
+      }
     }
+    else ""
   }
 
   private def getOwnerIndustry : String = {
-    try
-      document.getElementsByClass("descriptor").get(1).text()
-    catch {
-      case iob: IndexOutOfBoundsException => ""
-      case npe: NullPointerException => ""
+    if(document != null){
+      try
+        document.getElementsByClass("descriptor").get(1).text()
+      catch {
+        case iob: IndexOutOfBoundsException => ""
+        case npe: NullPointerException => ""
+      }
     }
+    else ""
   }
 
   /**Business Institution&Background methods*/
