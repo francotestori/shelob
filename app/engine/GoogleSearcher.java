@@ -102,7 +102,7 @@ public class GoogleSearcher {
             isTorRunning = false;
         } catch (IOException e) {
             if (e.getMessage().equals("HTTP error fetching URL")) {
-//                Thread.sleep(1000);
+                Thread.sleep(5000);
 //                getDataFromGoogle(name, query);
             }
         }

@@ -46,16 +46,14 @@ class LinkedInWizard {
 
         if (LinkedInValidator.validateUrl(e._1)) {
 
-          connect(e._1, e._2, searched)
-
-          val owner: LinkedInOwner = insertOwner(e._2, searched, ok.id.get)
-          val state : Long = owner.state
-          val id : Long = owner.id.get
-
-          if(state.equals(1)){
-            insertBusinessInfo(id)
-            insertAcademicInfo(id)
+          var owner : Long = 0
+          if(connect(e._1, e._2, searched)){
+            owner = insertOwner(e._2, searched, ok.id.get).id.get
+            insertBusinessInfo(owner)
+            insertAcademicInfo(owner)
+            owner = 0
           }
+
         }
 
       }
@@ -63,12 +61,13 @@ class LinkedInWizard {
     }
   }
 
-  private def reRunErrors(errors : List[(String,String)]) = run(errors,true)
+  private def reRunErrors(errors : List[(String,String)]) = run(errors,false)
 
-  private def connect(url : String, id : String,searched : Boolean) : Unit = {
+  private def connect(url : String, id : String,searched : Boolean) : Boolean = {
     this.url = url
     try{
       document = Jsoup.connect(url).timeout(10*1000).get
+      true
     }
     catch {
       case st : SocketTimeoutException => connect(url,id,searched)
@@ -78,6 +77,7 @@ class LinkedInWizard {
           connectionCounter = 0
           errorsList = (url,id) :: errorsList
           insertOwner(id,searched,urlError.id.get)
+          false
         }
         else{
           connect(url,id,searched)
@@ -91,6 +91,7 @@ class LinkedInWizard {
           connectionCounter = 0
           errorsList = (url,id) :: errorsList
           insertOwner(id,searched,connectionError.id.get)
+          false
         }
         else{
           connect(url,id,searched)
