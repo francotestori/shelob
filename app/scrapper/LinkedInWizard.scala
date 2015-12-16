@@ -48,9 +48,14 @@ class LinkedInWizard {
 
           connect(e._1, e._2, searched)
 
-          val owner: Long = insertOwner(e._2, searched, ok.id.get).id.get
-          insertBusinessInfo(owner)
-          insertAcademicInfo(owner)
+          val owner: LinkedInOwner = insertOwner(e._2, searched, ok.id.get)
+          val state : Long = owner.state
+          val id : Long = owner.id.get
+
+          if(state.equals(1)){
+            insertBusinessInfo(id)
+            insertAcademicInfo(id)
+          }
         }
 
       }
