@@ -90,12 +90,14 @@ object Shelob extends Controller {
       GoogleSearcher.printTime()
       GoogleSearcher.stopTorClient()
 
+      val notNullSearchedURLs = searchedURLs.filterNot { case (url,_) =>
+          url.equals("")
+      }
       //Scrap generation of data with LinkedInWizard for non-searched urls
       LinkedInWizard.run(urls,false)
 
-      searchedURLs.filter{ case (url, _ ) => !url.equals("") }
       //Scrap generation of data with LinkedInWizard for searched urls
-      LinkedInWizard.run(searchedURLs,true)
+      LinkedInWizard.run(notNullSearchedURLs,true)
 
       //File generation
       generateCSVs
