@@ -9,9 +9,10 @@ object IntervalSpider {
 
   def runBusiness(element : Element): String = {
     try {
-      var item = element.child(0).getElementsByClass("date-range").text()
-      if(item.isEmpty) item = element.getElementsByClass("date-range").text()
-      item
+      element.getElementsByClass("experience-date-locale").text()
+//      var item = element.child(0).getElementsByClass("date-range").text()
+//      if(item.isEmpty) item = element.getElementsByClass("date-range").text()
+//      item
     } catch {
       case iob: IndexOutOfBoundsException => ""
     }

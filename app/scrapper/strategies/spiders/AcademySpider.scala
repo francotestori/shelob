@@ -8,6 +8,11 @@ import org.jsoup.nodes.Element
 object AcademySpider {
 
   def run(element: Element): String = {
-    element.child(0).getElementsByClass("item-title").text()
+    try{
+      element.child(0).getElementsByClass("item-title").text()
+    }
+    catch {
+      case iob: IndexOutOfBoundsException => ""
+    }
   }
 }

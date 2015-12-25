@@ -9,8 +9,9 @@ object InstituteSpider {
 
   def run(element: Element): String = {
     try {
-      val item = element.child(0).getElementsByClass("item-subtitle").text()
-      item
+            element.getElementsByTag("h5").text()
+//      val item = element.child(0).getElementsByClass("item-subtitle").text()
+//      item
     } catch {
       case iob: IndexOutOfBoundsException => ""
     }

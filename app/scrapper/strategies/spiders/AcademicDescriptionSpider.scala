@@ -8,7 +8,13 @@ import org.jsoup.nodes.Element
 object AcademicDescriptionSpider {
 
   def run(element: Element): String = {
+    try{
     element.getElementsByClass("description").text()
+    }
+    catch {
+      case iob: IndexOutOfBoundsException => ""
+    }
+
   }
 
 }

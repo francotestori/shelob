@@ -61,7 +61,7 @@ public class GoogleSearcher {
 
     public static void startTorClient() throws InterruptedException {
         System.setProperty("socksProxyHost", "localhost");
-        System.setProperty("socksProxyPort", "9050");
+        System.setProperty("socksProxyPort", "9150");
         Thread.sleep(1000);
         isTorRunning = true;
     }

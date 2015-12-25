@@ -1,13 +1,14 @@
 package scrapper
 
+import java.io.IOException
 import java.net.{SocketTimeoutException, UnknownHostException}
 import java.util.regex.Pattern
 
 import daos._
 import models.{AcademicInstitution, BusinessInstitution, LinkedInOwner}
-import org.jsoup.{HttpStatusException, Jsoup}
-import org.jsoup.nodes.{Element, Document}
 import org.jsoup.select.Elements
+import org.jsoup.{Connection, HttpStatusException, Jsoup}
+import org.jsoup.nodes.{Element, Document}
 import scrapper.strategies._
 
 import scala.concurrent.{ExecutionContext, Await}
@@ -25,6 +26,10 @@ class LinkedInWizard {
   private var connectionCounter = 0
   private var errorsList : List[(String,String)]  = List()
 
+  private var cookies : java.util.Map[String,String] = null
+  private val ID : String = "shelob.nazgul@gmail.com"
+  private val PASS : String = "Shelob6719"
+
   /**DAO variables*/
   private val ownerDAO : LinkedInOwnerDAO = new LinkedInOwnerDAO()
   private val institutionDAO : BusinessInstitutionDAO = new BusinessInstitutionDAO()
@@ -40,6 +45,7 @@ class LinkedInWizard {
 
   /** Metodo que se encarga de ejecutar el scrap de la Lista(url,tangelaId) */
   def run(urls : List[(String,String)], searched : Boolean) = {
+
     if(urls.nonEmpty) {
 
       urls.foreach { e =>
@@ -61,12 +67,45 @@ class LinkedInWizard {
     }
   }
 
+  def generateCookie = {
+    val loginUrl = "https://www.linkedin.com/uas/login?goback=&trk=hb_signin"
+
+    try {
+
+      var response = Jsoup.connect(loginUrl).method(Connection.Method.GET).execute()
+
+      val responseDocument : Document = response.parse()
+      val loginCsrfParam : Element = responseDocument.select("input[name=loginCsrfParam]").first()
+
+      response = Jsoup.connect("https://www.linkedin.com/uas/login-submit")
+        .cookies(response.cookies())
+        .data("loginCsrfParam", loginCsrfParam.attr("value"))
+        .data("session_key", ID)
+        .data("session_password", PASS)
+        .method(Connection.Method.POST)
+        .followRedirects(true)
+        .execute()
+
+      val document : Document = response.parse()
+
+
+      println("Welcome " + document.select(".act-set-name-split-link").html())
+      cookies = response.cookies()
+
+    } catch {
+      case io : IOException => io.printStackTrace()
+    }
+  }
+
   private def reRunErrors(errors : List[(String,String)]) = run(errors,false)
 
   private def connect(url : String, id : String,searched : Boolean) : Boolean = {
     this.url = url
     try{
-      document = Jsoup.connect(url).timeout(10*1000).get
+      if(cookies != null)
+        document = Jsoup.connect(url).cookies(cookies).timeout(10*1000).get
+      else
+        document = Jsoup.connect(url).timeout(10*1000).get
       true
     }
     catch {
@@ -158,18 +197,19 @@ class LinkedInWizard {
 
   /**Business Institution&Background methods*/
   private def insertBusinessInfo(owner : Long) = {
-    val businessInfo : Element = getExperiences
+    val businessInfo : Elements = getExperiences
 
     if(businessInfo != null)
-      for(i <- 0 to businessInfo.children().size() - 1 by 1){
-        processBusiness(businessInfo.child(i),owner)
+      for(i <- 0 to businessInfo.size() - 1 by 1){
+        processBusiness(businessInfo.get(i),owner)
       }
   }
 
-  //"experience-[0-9]+[0-9]*"
-  private def getExperiences : Element = {
+  //document.getElementsByAttributeValueMatching("id",Pattern.compile("experience-[0-9]+[0-9]*-view"))
+  private def getExperiences : Elements = {
     try{
-      document.getElementsByAttributeValueMatching("class",Pattern.compile("position")).first()
+      document.getElementsByAttributeValueMatching("id",Pattern.compile("experience-[0-9]+[0-9]*-view"))
+//      document.getElementsByAttributeValueMatching("class",Pattern.compile("position")).first()
     }
     catch {
       case iob: IndexOutOfBoundsException => null
@@ -178,6 +218,7 @@ class LinkedInWizard {
 }
 
   private def processBusiness(element : Element, owner : Long) ={
+
     val background : (String,String,String,String) = BusinessBackgroundStrategy.apply(element)
 
     if(LinkedInValidator.validateBusiness(background._1,background._2,background._3)){
@@ -196,19 +237,20 @@ class LinkedInWizard {
 
   /**Academic Institution&Background methods*/
   private def insertAcademicInfo(owner : Long) = {
-    val academicInfo : Element = getAcademics
+    val academicInfo : Elements = getAcademics
 
     if(academicInfo != null)
-      for(i <- 0 to academicInfo.children().size() - 1 by 1){
-        processAcademics(academicInfo.child(i),owner)
+      for(i <- 0 to academicInfo.size() - 1 by 1){
+        processAcademics(academicInfo.get(i),owner)
       }
 
   }
 
-  //"education-[0-9]+[0-9]*"
-  private def getAcademics : Element = {
+  //document.getElementsByAttributeValueMatching("id",Pattern.compile("background-education")).first().getElementsByClass("education")
+  private def getAcademics : Elements = {
     try{
-      document.getElementsByAttributeValueMatching("class",Pattern.compile("school")).first()
+        document.getElementsByAttributeValueMatching("id",Pattern.compile("background-education")).first().getElementsByClass("education")
+//        document.getElementsByAttributeValueMatching("class",Pattern.compile("school")).first()
     }
     catch {
       case iob: IndexOutOfBoundsException => null
@@ -258,6 +300,8 @@ object LinkedInWizard {
     val errors = wizard.getErrors
     wizard.reRunErrors(errors)
   }
+
+  def generateCookies = wizard.generateCookie
 
   def getSize = size
 

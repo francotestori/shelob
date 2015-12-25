@@ -93,11 +93,15 @@ object Shelob extends Controller {
       val notNullSearchedURLs = searchedURLs.filterNot { case (url,_) =>
           url.equals("")
       }
+
+      //Log into LinkedIn
+      LinkedInWizard.generateCookies
+
       //Scrap generation of data with LinkedInWizard for non-searched urls
-      LinkedInWizard.run(urls,false)
+//      LinkedInWizard.run(urls,false)
 
       //Scrap generation of data with LinkedInWizard for searched urls
-      LinkedInWizard.run(notNullSearchedURLs,true)
+//      LinkedInWizard.run(notNullSearchedURLs,true)
 
       //File generation
       generateCSVs

@@ -9,7 +9,8 @@ import scrapper.strategies.spiders.{RoleSpider, IntervalSpider, InstituteSpider,
 class BusinessBackgroundStrategy {
 
   def apply(element : Element) : (String,String,String,String)={
-    val info : String = scrapInfo(element)
+    val info : String =
+      scrapInfo(element)
     val interval : String = scrapInterval(element)
     val institute : String = scrapInstitute(element)
     val role : String = scrapRole(element)

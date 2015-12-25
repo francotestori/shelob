@@ -9,7 +9,8 @@ object RoleSpider {
 
   def run(element : Element): String = {
     try {
-      element.child(0).getElementsByClass("item-title").text()
+      element.getElementsByTag("h4").text()
+//      element.child(0).getElementsByClass("item-title").text()
     } catch {
       case iob: IndexOutOfBoundsException => ""
     }

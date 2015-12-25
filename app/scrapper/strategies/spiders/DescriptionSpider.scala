@@ -9,9 +9,10 @@ object DescriptionSpider {
 
   def run(element: Element): String = {
     try {
-      var item = element.child(2).getElementsByClass("description").text()
-      if(item.isEmpty) item = element.getElementsByClass("description").text()
-      item
+      element.getElementsByClass("description summary-field-show-more").text()
+//      var item = element.child(2).getElementsByClass("description").text()
+//      if(item.isEmpty) item = element.getElementsByClass("description").text()
+//      item
     } catch {
       case iob: IndexOutOfBoundsException => ""
     }
